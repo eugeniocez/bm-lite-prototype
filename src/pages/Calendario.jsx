@@ -167,7 +167,7 @@ function CitaBlock({ cita, onClick }) {
   )
 }
 
-function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick }) {
+function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint = false }) {
   const [scrolled, setScrolled] = useState(false)
 
   return (
@@ -200,27 +200,31 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick }) {
           })}
         </div>
       </div>
-      {/* Fade + badge — se ocultan al hacer scroll */}
-      <div
-        className="absolute top-0 right-0 bottom-0 pointer-events-none z-20 transition-opacity duration-200"
-        style={{
-          width: "30%",
-          background: "linear-gradient(to right, transparent, var(--scroll-fade, rgba(255,255,255,0.97)))",
-          opacity: scrolled ? 0 : 1,
-        }}
-      />
-      <div
-        className="absolute right-2 pointer-events-none z-30 flex items-center justify-center transition-opacity duration-200"
-        style={{
-          top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`,
-          transform: "translateY(-50%)",
-          opacity: scrolled ? 0 : 1,
-        }}
-      >
-        <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-          +{cluster.hiddenCount}
-        </span>
-      </div>
+      {/* Fade + badge — se ocultan al hacer scroll o en desktop */}
+      {!hideHint && (
+        <>
+          <div
+            className="absolute top-0 right-0 bottom-0 pointer-events-none z-20 transition-opacity duration-200"
+            style={{
+              width: "30%",
+              background: "linear-gradient(to right, transparent, var(--scroll-fade, rgba(255,255,255,0.97)))",
+              opacity: scrolled ? 0 : 1,
+            }}
+          />
+          <div
+            className="absolute right-2 pointer-events-none z-30 flex items-center justify-center transition-opacity duration-200"
+            style={{
+              top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`,
+              transform: "translateY(-50%)",
+              opacity: scrolled ? 0 : 1,
+            }}
+          >
+            <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
+              +{cluster.hiddenCount}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -257,10 +261,12 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
       <div className="absolute inset-0">
         {normal.map(cita => <CitaBlock key={cita.id} cita={cita} onClick={onClick} />)}
       </div>
-      {/* Scroll clusters — >3 citas simultáneas, scroll horizontal */}
+      {/* Scroll clusters — >3 citas simultáneas, scroll horizontal en mobile */}
       {scrollClusters.map((cluster, i) => {
-        const MAX_COLS = 3
-        const innerWidthPct = cluster.totalCols / MAX_COLS * 100
+        // On desktop show more cols, no scroll needed
+        const isDesktop = window.innerWidth >= 768
+        const MAX_VISIBLE = isDesktop ? cluster.totalCols : 3
+        const innerWidthPct = cluster.totalCols / MAX_VISIBLE * 100
         const colWidthPct = 100 / cluster.totalCols
         return (
           <ScrollCluster
@@ -269,6 +275,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
             innerWidthPct={innerWidthPct}
             colWidthPct={colWidthPct}
             onClick={onClick}
+            hideHint={isDesktop}
           />
         )
       })}
@@ -333,12 +340,10 @@ export default function Calendario() {
                 </button>
               ))}
             </div>
-            {/* FEATURE: Gestión de usuarios — oculto hasta implementación
             <button onClick={() => setUsuariosOpen(true)} className="flex items-center gap-0.5 p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
               <Users size={17} className="text-gray-600 dark:text-gray-400" />
               <Plus size={13} className="text-gray-600 dark:text-gray-400" />
             </button>
-            */}
           </div>
         </div>
 

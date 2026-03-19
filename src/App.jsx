@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import BottomNav from './components/shared/BottomNav'
+import Sidebar from './components/shared/Sidebar'
 import QuickBook from './pages/QuickBook'
 import Calendario from './pages/Calendario'
 import Clientes from './pages/Clientes'
@@ -16,34 +17,54 @@ function AppContent() {
   if (location.pathname === '/' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
   }
-
   if (location.pathname === '/bienvenida' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
   }
 
-  return (
-    <div className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col relative shadow-xl">
-      <main className={`flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 ${sinNav ? '' : 'pb-20'}`}>
+  // Pantallas de auth — sin nav, centradas
+  if (sinNav) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Routes>
           <Route path="/" element={<Navigate to="/bienvenida" replace />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/bienvenida" element={<Bienvenida />} />
-          <Route path="/quickbook" element={<QuickBook />} />
-          <Route path="/calendario" element={<Calendario />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/invite" element={<Invite />} />
         </Routes>
-      </main>
-      {!sinNav && <BottomNav />}
+      </div>
+    )
+  }
+
+  // App principal — con nav
+  return (
+    <div className="h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 flex">
+
+      {/* Sidebar — tablet y desktop */}
+      <Sidebar />
+
+      {/* Contenido principal */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+
+        {/* En móvil: columna centrada max-w-md. En md+: full width */}
+        <div className="flex-1 flex flex-col h-full w-full max-w-md mx-auto md:max-w-none md:mx-0 relative overflow-hidden">
+          <main className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950 flex flex-col">
+            <Routes>
+              <Route path="/" element={<Navigate to="/quickbook" replace />} />
+              <Route path="/quickbook" element={<QuickBook />} />
+              <Route path="/calendario" element={<Calendario />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/invite" element={<Invite />} />
+            </Routes>
+          </main>
+
+          {/* BottomNav — solo móvil */}
+          <BottomNav />
+        </div>
+      </div>
     </div>
   )
 }
 
 export default function App() {
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <AppContent />
-    </div>
-  )
+  return <AppContent />
 }

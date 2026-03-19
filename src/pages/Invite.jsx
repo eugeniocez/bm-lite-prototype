@@ -16,7 +16,7 @@ const PASOS = ['Contactos', 'Mensaje', 'Confirmar']
 
 function StepIndicator({ paso }) {
   return (
-    <div className="flex items-center justify-center mb-5">
+    <div className="flex items-center justify-center mb-4">
       {PASOS.map((label, i) => {
         const num = i + 1
         const activo = num === paso
@@ -104,24 +104,18 @@ export default function Invite() {
   if (enviado) {
     return (
       <>
-        <div className="flex flex-col bg-gray-50" style={{ height: 'calc(100vh - 64px)' }}>
-          <div className="px-5 pt-6 pb-4 border-b border-gray-200 bg-white shrink-0">
-            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-1">
-              <Send size={20} className="text-gray-900" />
-              INVITE
-            </h1>
-            <p className="text-gray-400 text-sm">Reactiva clientes que no te han visitado en 30+ días</p>
-          </div>
-          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-            <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mb-4">
-              <Check size={32} className="text-white" />
+        <div className="flex flex-col bg-gray-50 dark:bg-gray-950 min-h-full">
+          <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
+          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
+            <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mb-4">
+              <Check size={32} className="text-white dark:text-gray-900" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">¡Campaña enviada!</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Campaña enviada!</h2>
             <p className="text-gray-500 text-sm mb-1">
               {seleccionados.length} mensaje{seleccionados.length > 1 ? 's' : ''} despachado{seleccionados.length > 1 ? 's' : ''}
             </p>
             <p className="text-gray-400 text-xs mb-8">Las reservas generadas aparecerán etiquetadas en el calendario</p>
-            <button onClick={handleReset} className="bg-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
+            <button onClick={handleReset} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
               Nueva campaña
             </button>
           </div>
@@ -132,11 +126,35 @@ export default function Invite() {
   }
 
   return (
-    <div className="min-h-full bg-gray-50 dark:bg-gray-950 flex flex-col">
+    <div className="flex flex-col flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950">
+      {/* Header */}
       <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
 
-      <div className="flex-1 overflow-y-auto px-5 py-5 pb-28">
+      {/* Step indicator + CTA — siempre visible */}
+      <div className="px-5 pt-4 pb-3 bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shrink-0">
         <StepIndicator paso={paso} />
+        <div className="flex gap-2">
+          {paso > 1 && (
+            <button onClick={() => setPaso(p => p - 1)} className="flex items-center gap-1.5 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <ArrowLeft size={16} />Atrás
+            </button>
+          )}
+          {paso < 3 ? (
+            <button onClick={() => setPaso(p => p + 1)} disabled={paso === 1 && seleccionados.length === 0}
+              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              Siguiente<ArrowRight size={16} />
+            </button>
+          ) : (
+            <button onClick={handleEnviar} disabled={seleccionados.length === 0}
+              className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              <Send size={16} />Enviar campaña
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Contenido — solo esta área hace scroll */}
+      <div className="flex-1 overflow-y-auto px-5 py-5 pb-20 md:pb-5">
 
         {paso === 1 && (
           <div className="space-y-5">
@@ -228,27 +246,6 @@ export default function Invite() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md px-5 pb-3 bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
-        <div className="flex gap-2 pt-3">
-          {paso > 1 && (
-            <button onClick={() => setPaso(p => p - 1)} className="flex items-center gap-1.5 px-4 py-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              <ArrowLeft size={16} />Atrás
-            </button>
-          )}
-          {paso < 3 ? (
-            <button onClick={() => setPaso(p => p + 1)} disabled={paso === 1 && seleccionados.length === 0}
-              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-              Siguiente<ArrowRight size={16} />
-            </button>
-          ) : (
-            <button onClick={handleEnviar} disabled={seleccionados.length === 0}
-              className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-              <Send size={16} />Enviar campaña
-            </button>
-          )}
-        </div>
       </div>
     </div>
   )

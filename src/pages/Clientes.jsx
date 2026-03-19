@@ -7,7 +7,7 @@ import { ESTADO_CONFIG } from '../utils/estados'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
 
-export default function Directorio() {
+export default function Clientes() {
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
   const [busqueda, setBusqueda] = useState('')
@@ -18,75 +18,110 @@ export default function Directorio() {
     .filter(c => c.nombre.toLowerCase().includes(busqueda.toLowerCase()) || c.celular.includes(busqueda))
     .sort((a, b) => a.nombre.localeCompare(b.nombre))
 
-  if (contactoSeleccionado) {
-    return (
-      <ContactoPantalla
-        contacto={contactoSeleccionado}
-        onClose={() => setContactoSeleccionado(null)}
-        onToggleInvite={() => {
-          toggleInviteList(contactoSeleccionado.id)
-          setContactoSeleccionado(prev => ({ ...prev, enInviteList: !prev.enInviteList }))
-        }}
-        onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
-      />
-    )
+  const handleToggleInvite = () => {
+    toggleInviteList(contactoSeleccionado.id)
+    setContactoSeleccionado(prev => ({ ...prev, enInviteList: !prev.enInviteList }))
   }
 
   return (
-    <div className="min-h-full bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Clientes" subtitle={`${contactos.length} contactos`} icon={Users} />
-      <div className="px-5 pt-4 pb-2 bg-white dark:bg-gray-900">
-        <div className="relative">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            placeholder="Buscar por nombre o celular..."
-            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all"
-          />
+    <div className="flex flex-1 overflow-hidden bg-white dark:bg-gray-900">
+
+      {/* Lista — siempre visible */}
+      <div className={`flex flex-col overflow-hidden ${contactoSeleccionado ? 'hidden md:flex md:w-80 lg:w-96 border-r border-gray-100 dark:border-gray-800' : 'flex-1'}`}>
+        <PageHeader title="Clientes" subtitle={`${contactos.length} contactos`} icon={Users} />
+        <div className="px-5 pt-4 pb-2 bg-white dark:bg-gray-900">
+          <div className="relative">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              placeholder="Buscar por nombre o celular..."
+              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all"
+            />
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900 pb-20 md:pb-0">
+          {filtrados.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <Users size={40} className="text-gray-200 dark:text-gray-700 mb-3" />
+              <p className="text-gray-400 font-medium">Sin resultados</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {filtrados.map(contacto => {
+                const activo = contactoSeleccionado?.id === contacto.id
+                return (
+                  <button
+                    key={contacto.id}
+                    onClick={() => setContactoSeleccionado(contacto)}
+                    className={`w-full flex items-center gap-3 px-5 py-4 transition-colors text-left ${
+                      activo
+                        ? 'bg-gray-100 dark:bg-gray-800'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100'
+                    }`}
+                  >
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-gray-700 dark:text-gray-300 font-bold text-sm">{contacto.nombre[0]}</span>
+                    </div>
+                    <p className="flex-1 text-gray-900 dark:text-white font-semibold text-sm">{contacto.nombre}</p>
+                    <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
-        {filtrados.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <Users size={40} className="text-gray-200 dark:text-gray-700 mb-3" />
-            <p className="text-gray-400 font-medium">Sin resultados</p>
+      {/* Panel de detalle */}
+      {contactoSeleccionado ? (
+        <>
+          {/* Mobile — pantalla completa */}
+          <div className="md:hidden fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col">
+            <ContactoDetalle
+              contacto={contactoSeleccionado}
+              onClose={() => setContactoSeleccionado(null)}
+              onToggleInvite={handleToggleInvite}
+              onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
+            />
           </div>
-        ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
-            {filtrados.map(contacto => (
-              <button
-                key={contacto.id}
-                onClick={() => setContactoSeleccionado(contacto)}
-                className="w-full flex items-center gap-3 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700 transition-colors text-left"
-              >
-                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shrink-0">
-                  <span className="text-gray-700 dark:text-gray-300 font-bold text-sm">{contacto.nombre[0]}</span>
-                </div>
-                <p className="flex-1 text-gray-900 dark:text-white font-semibold text-sm">{contacto.nombre}</p>
-                <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
-              </button>
-            ))}
+          {/* Desktop — panel lateral */}
+          <div className="hidden md:flex flex-1 flex-col overflow-y-auto">
+            <ContactoDetalle
+              contacto={contactoSeleccionado}
+              onClose={() => setContactoSeleccionado(null)}
+              onToggleInvite={handleToggleInvite}
+              onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
+              esPanel
+            />
           </div>
-        )}
-      </div>
+        </>
+      ) : (
+        /* Estado vacío en desktop cuando no hay contacto seleccionado */
+        <div className="hidden md:flex flex-1 flex-col items-center justify-center text-center px-8">
+          <Users size={48} className="text-gray-200 dark:text-gray-700 mb-4" />
+          <p className="text-gray-400 font-medium text-sm">Selecciona un cliente para ver su perfil</p>
+        </div>
+      )}
     </div>
   )
 }
 
-function ContactoPantalla({ contacto, onClose, onToggleInvite, onQuickBook }) {
+function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPanel = false }) {
   const getCitasPorCliente = useCitasStore(s => s.getCitasPorCliente)
   const historial = getCitasPorCliente(contacto.celular).slice(0, 5)
   const dias = daysSince(contacto.ultimaVisita)
 
   return (
-    <div className="fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 z-50 flex flex-col">
-      <div className="flex items-center gap-3 px-5 pt-12 pb-4 border-b border-gray-100 dark:border-gray-800">
-        <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-          <ArrowLeft size={22} />
-        </button>
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className={`flex items-center gap-3 px-5 border-b border-gray-100 dark:border-gray-800 ${esPanel ? 'pt-6 pb-4' : 'pt-12 pb-4'}`}>
+        {!esPanel && (
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <ArrowLeft size={22} />
+          </button>
+        )}
         <div className="flex-1">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">{contacto.nombre}</h1>
         </div>
@@ -95,7 +130,8 @@ function ContactoPantalla({ contacto, onClose, onToggleInvite, onQuickBook }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+      {/* Contenido */}
+      <div className="flex-1 overflow-y-auto px-5 py-5 pb-24 md:pb-5 space-y-5">
         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2.5 border border-gray-100 dark:border-gray-700">
           <Row label="Celular" value={contacto.celular} />
           <Row label="Última visita" value={contacto.ultimaVisita ? formatDate(contacto.ultimaVisita) : 'Sin visitas'} />
@@ -134,8 +170,7 @@ function ContactoPantalla({ contacto, onClose, onToggleInvite, onQuickBook }) {
 
         <div className="space-y-2 pt-2">
           <button onClick={onQuickBook} className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
-            <Zap size={16} />
-            Nueva cita
+            <Zap size={16} />Nueva cita
           </button>
           <button
             onClick={onToggleInvite}

@@ -11,7 +11,7 @@ const NAV_ITEMS = [
 export default function BottomNav() {
   const { pathname } = useLocation()
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex z-40 shadow-lg">
+    <nav className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex z-40 shadow-lg">
       {NAV_ITEMS.map(({ to, label, Icon }) => {
         const active = pathname.startsWith(to)
         return (
