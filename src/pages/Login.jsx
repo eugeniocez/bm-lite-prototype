@@ -39,8 +39,8 @@ export default function Login() {
         <>
           <div className="mb-8">
             <div className="flex justify-center mb-6">
-              <img src="/logo.webp" alt="BarberMonster" className="h-10 dark:hidden" />
-              <img src="/logo-white.webp" alt="BarberMonster" className="h-10 hidden dark:block" />
+              <img src="/logo.webp" alt="BarberMonster" className="h-14 dark:hidden" />
+              <img src="/logo-white.webp" alt="BarberMonster" className="h-14 hidden dark:block" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">Bienvenido de vuelta</h1>
             <p className="text-gray-400 text-sm text-center">Ingresa tu número para recibir un código de acceso.</p>
@@ -81,8 +81,8 @@ export default function Login() {
         <>
           <div className="mb-8">
             <div className="flex justify-center mb-6">
-              <img src="/logo.webp" alt="BarberMonster" className="h-10 dark:hidden" />
-              <img src="/logo-white.webp" alt="BarberMonster" className="h-10 hidden dark:block" />
+              <img src="/logo.webp" alt="BarberMonster" className="h-14 dark:hidden" />
+              <img src="/logo-white.webp" alt="BarberMonster" className="h-14 hidden dark:block" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">Revisa tu teléfono</h1>
             <p className="text-gray-400 text-sm text-center">Enviamos un código al <span className="text-gray-900 dark:text-white font-semibold">{telefono}</span>. Ingrésalo abajo.</p>
