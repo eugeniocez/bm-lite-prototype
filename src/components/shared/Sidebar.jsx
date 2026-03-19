@@ -15,9 +15,9 @@ export default function Sidebar() {
     <aside className="hidden md:flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shrink-0 w-16 lg:w-56 transition-all duration-200">
 
       {/* Logo */}
-      <div className="flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-800 shrink-0">
-        <img src="/logo.webp" alt="BarberMonster" className="h-7 dark:hidden" />
-        <img src="/logo-white.webp" alt="BarberMonster" className="h-7 hidden dark:block" />
+      <div className="hidden lg:flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-800 shrink-0">
+        <img src="/logo.webp" alt="BarberMonster" className="h-9 dark:hidden" />
+        <img src="/logo-white.webp" alt="BarberMonster" className="h-9 hidden dark:block" />
       </div>
 
       {/* Nav items */}

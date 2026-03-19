@@ -320,7 +320,7 @@ export default function Calendario() {
   const tituloNav = vista === 'dia' ? formatDateLong(fechaActual) : `${formatDate(tresDias[0])} — ${formatDate(tresDias[2])}`
 
   return (
-    <div className="fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 flex flex-col overflow-hidden">
+    <div className="flex flex-col flex-1 bg-white dark:bg-gray-900 overflow-hidden">
       {usuariosOpen && <UsuariosPantalla onClose={() => setUsuariosOpen(false)} />}
 
       {/* Header */}
@@ -340,10 +340,12 @@ export default function Calendario() {
                 </button>
               ))}
             </div>
+            {/* FEATURE: Gestión de usuarios — pendiente
             <button onClick={() => setUsuariosOpen(true)} className="flex items-center gap-0.5 p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
               <Users size={17} className="text-gray-600 dark:text-gray-400" />
               <Plus size={13} className="text-gray-600 dark:text-gray-400" />
             </button>
+            */}
           </div>
         </div>
 
