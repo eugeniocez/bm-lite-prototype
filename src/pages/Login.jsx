@@ -33,6 +33,14 @@ export default function Login() {
 
   return (
     <div className="fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 flex flex-col px-8 justify-center">
+      {/* Gradiente superior de marca */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: '220px',
+          background: 'linear-gradient(to bottom, rgba(231,54,69,0.18) 0%, rgba(231,54,69,0.06) 50%, transparent 100%)'
+        }}
+      />
 
       {/* PASO 1 — Teléfono */}
       {paso === 1 && (
