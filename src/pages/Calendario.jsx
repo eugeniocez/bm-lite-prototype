@@ -392,7 +392,7 @@ export default function Calendario() {
       {/* ── VISTA DÍA ── */}
       {vista === 'dia' && (
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="flex" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+          <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
             <div className="w-14 shrink-0 select-none">
               {HOURS.map(hour => (
                 <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-3 pt-1">
@@ -432,7 +432,7 @@ export default function Calendario() {
             })}
           </div>
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            <div className="flex" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
@@ -482,7 +482,7 @@ export default function Calendario() {
           </div>
           {/* Grid */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            <div className="flex" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
