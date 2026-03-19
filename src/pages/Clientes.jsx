@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Users, Search, ArrowLeft, Zap, Send, ChevronRight } from 'lucide-react'
+import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
 import { daysSince, formatDate } from '../utils/helpers'
@@ -128,6 +128,11 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
         <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shrink-0">
           <span className="text-gray-700 dark:text-gray-300 font-bold text-base">{contacto.nombre[0]}</span>
         </div>
+        {esPanel && (
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors ml-1">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       {/* Contenido */}

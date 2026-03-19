@@ -14,8 +14,8 @@ export default function Modal({ isOpen, onClose, title, children }) {
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div
-        className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-900 rounded-t-2xl shadow-2xl flex flex-col"
-        style={{ height: '75vh', marginBottom: '64px' }}
+        className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col"
+        style={{ height: '75vh', marginBottom: '80px' }}
       >
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
           <h2 className="text-base font-bold text-gray-900 dark:text-white">{title}</h2>
