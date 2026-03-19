@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { useNegocioStore } from '../store/negocio'
 
 const CODIGO_DEMO = '1234'
 
@@ -24,6 +25,7 @@ export default function Registro() {
       setPaso(2)
     } else if (paso === 2) {
       if (codigo === CODIGO_DEMO) {
+        useNegocioStore.getState().setNombreBarberia(barberia)
         navigate('/bienvenida')
       } else {
         setError('Código incorrecto. Usa 1234 para este demo.')
