@@ -91,7 +91,7 @@ export default function QuickBook() {
       }`}
     >
       <Clock size={15} />
-      Walk-in
+      Cliente sin Cita
     </button>
   )
 
