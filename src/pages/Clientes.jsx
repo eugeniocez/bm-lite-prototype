@@ -34,7 +34,7 @@ export default function Directorio() {
 
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Directorio" subtitle={`${contactos.length} contactos`} icon={Users} />
+      <PageHeader title="Clientes" subtitle={`${contactos.length} contactos`} icon={Users} />
       <div className="px-5 pt-4 pb-2 bg-white dark:bg-gray-900">
         <div className="relative">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
