@@ -522,6 +522,15 @@ function CitaDetalle({ cita, onCambiarEstado }) {
   const transiciones = TRANSICIONES[cita.estado] || []
   const [confirmandoCancelar, setConfirmandoCancelar] = useState(false)
 
+  // No-show solo disponible si la cita ya pasó (con 30 min de gracia)
+  const citaDateTime = new Date(`${cita.fecha}T${cita.hora}:00`)
+  const ahora = new Date()
+  const noShowDisponible = ahora >= new Date(citaDateTime.getTime() + 30 * 60 * 1000)
+
+  const transicionesFiltradas = transiciones.filter(est =>
+    est === 'NoShow' ? noShowDisponible : true
+  )
+
   const ACCION_COLORS = {
     Confirmada: 'bg-gray-900 text-white hover:bg-gray-800',
     SinConfirmar: 'bg-gray-100 text-gray-900 border border-gray-200 hover:bg-gray-200',
@@ -569,11 +578,11 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         {cita.nota && <Row label="Nota" value={cita.nota} />}
         <Row label="Origen" value={cita.origen} />
       </div>
-      {transiciones.length > 0 && (
+      {transicionesFiltradas.length > 0 && (
         <div>
           <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide mb-2">Cambiar estado</p>
           <div className="space-y-2">
-            {transiciones.map(est => (
+            {transicionesFiltradas.map(est => (
               <button key={est} onClick={() => handleAccion(est)} className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${ACCION_COLORS[est] || 'bg-gray-100 text-gray-700'}`}>
                 {ACCION_LABELS[est] || est}
               </button>
@@ -581,7 +590,7 @@ function CitaDetalle({ cita, onCambiarEstado }) {
           </div>
         </div>
       )}
-      {transiciones.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">Estado terminal — no hay más acciones disponibles</p>}
+      {transicionesFiltradas.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">Estado terminal — no hay más acciones disponibles</p>}
     </div>
   )
 }
