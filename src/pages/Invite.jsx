@@ -4,12 +4,16 @@ import PageHeader from '../components/shared/PageHeader'
 import { useDirectorioStore } from '../store/directorio'
 import { useInviteStore } from '../store/invite'
 import { daysSince } from '../utils/helpers'
-import { sms } from '../utils/sms-templates'
+import { sms, proximoDiaTransquilo } from '../utils/sms-templates'
 import SMSModal from '../components/shared/SMSModal'
 
 const PLANTILLAS = [
   { id: 'v1', label: '"Hace tiempo"', fn: sms.inviteV1 },
-  { id: 'v2', label: '"El martes está tranquilo"', fn: sms.inviteV2 },
+  { id: 'v2', label: `"El ${proximoDiaTransquilo()} está tranquilo"`, fn: sms.inviteV2 },
+  { id: 'v3', label: '"Tu look te llama"', fn: sms.inviteV3 },
+  { id: 'v4', label: '"Llevamos un rato"', fn: sms.inviteV4 },
+  { id: 'v5', label: '"Hay disponibilidad"', fn: sms.inviteV5 },
+  { id: 'v6', label: '"Un buen corte"', fn: sms.inviteV6 },
 ]
 
 const PASOS = ['Contactos', 'Mensaje', 'Confirmar']
