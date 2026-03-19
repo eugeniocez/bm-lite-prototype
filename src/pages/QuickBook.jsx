@@ -9,6 +9,8 @@ import PageHeader from '../components/shared/PageHeader'
 
 export default function QuickBook() {
   const agregarCita = useCitasStore(s => s.agregarCita)
+  const getCitasPorFecha = useCitasStore(s => s.getCitasPorFecha)
+  const cambiarEstado = useCitasStore(s => s.cambiarEstado)
   const contactos = useDirectorioStore(s => s.contactos)
   const buscarPorCelular = useDirectorioStore(s => s.buscarPorCelular)
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
@@ -24,6 +26,8 @@ export default function QuickBook() {
   const [exito, setExito] = useState(false)
   const [sugerencias, setSugerencias] = useState([])
   const [showSugerencias, setShowSugerencias] = useState(false)
+  const [conflicto, setConflicto] = useState(null)
+  const [pendingData, setPendingData] = useState(null)
   const nombreRef = useRef(null)
 
   const handleNombre = (val) => {
@@ -62,9 +66,8 @@ export default function QuickBook() {
     if (nuevoEstado) { setFecha(todayStr()); setHora(nowTimeStr()) }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!celular || !nombre || !fecha || !hora) return
+  const crearCita = (data) => {
+    const { nombre, celular, fecha, hora, nota, esWalkIn } = data
     const estado = esWalkIn ? 'WalkIn' : 'Apartada'
     const origen = esWalkIn ? 'WalkIn' : 'QuickBook'
     agregarCita({ nombreCliente: nombre, celular, fecha, hora, nota: nota || null, estado, origen })
@@ -76,6 +79,32 @@ export default function QuickBook() {
     setSugerencias([]); setShowSugerencias(false)
     setExito(true)
     setTimeout(() => setExito(false), 3000)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!celular || !nombre || !fecha || !hora) return
+    // Detectar conflicto — cita SinConfirmar en el mismo horario
+    const citasDelDia = getCitasPorFecha(fecha)
+    const citaConflicto = citasDelDia.find(c => c.hora === hora && c.estado === 'SinConfirmar')
+    if (citaConflicto) {
+      setConflicto(citaConflicto)
+      setPendingData({ nombre, celular, fecha, hora, nota, esWalkIn })
+      return
+    }
+    crearCita({ nombre, celular, fecha, hora, nota, esWalkIn })
+  }
+
+  const handleConservar = () => {
+    setConflicto(null)
+    setPendingData(null)
+  }
+
+  const handleLiberar = () => {
+    cambiarEstado(conflicto.id, 'Cancelada')
+    crearCita(pendingData)
+    setConflicto(null)
+    setPendingData(null)
   }
 
   const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-base focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all shadow-sm"
@@ -109,6 +138,23 @@ export default function QuickBook() {
         {exito && (
           <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
             <p className="text-gray-900 dark:text-white text-sm font-semibold">✓ Cita creada correctamente</p>
+          </div>
+        )}
+
+        {conflicto && (
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl p-4 space-y-3">
+            <p className="text-amber-800 dark:text-amber-300 font-semibold text-sm">
+              Ya tienes una cita sin confirmar a las {conflicto.hora} con {conflicto.nombreCliente}.
+            </p>
+            <p className="text-amber-700 dark:text-amber-400 text-xs">¿La conservas o liberas ese espacio para este nuevo cliente?</p>
+            <div className="flex gap-2">
+              <button type="button" onClick={handleConservar} className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-white dark:bg-gray-800 border border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-300 hover:bg-amber-50 transition-colors">
+                Conservar
+              </button>
+              <button type="button" onClick={handleLiberar} className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+                Liberar
+              </button>
+            </div>
           </div>
         )}
 
