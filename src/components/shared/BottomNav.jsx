@@ -4,7 +4,7 @@ import { Zap, Calendar, Users, Send } from 'lucide-react'
 const NAV_ITEMS = [
   { to: '/quickbook', label: 'Nueva Cita', Icon: Zap },
   { to: '/calendario', label: 'Calendario', Icon: Calendar },
-  { to: '/directorio', label: 'Clientes', Icon: Users },
+  { to: '/clientes', label: 'Clientes', Icon: Users },
   { to: '/invite', label: 'INVITE', Icon: Send },
 ]
 
