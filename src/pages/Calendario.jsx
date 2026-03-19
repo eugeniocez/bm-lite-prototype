@@ -32,6 +32,15 @@ function getDayLabel(dateStr) {
   return DIAS[d.getDay()]
 }
 
+// Obtiene el lunes de la semana de una fecha dada
+function getLunesDeSemana(dateStr) {
+  const d = new Date(`${dateStr}T12:00:00`)
+  const day = d.getDay() // 0=Dom, 1=Lun...
+  const diff = day === 0 ? -6 : 1 - day // ajuste para que semana empiece en lunes
+  d.setDate(d.getDate() + diff)
+  return d.toISOString().split('T')[0]
+}
+
 const USUARIOS_SEED = [
   { id: 'u1', nombre: 'Tú', rol: 'Administrador', esAdmin: true, telefono: '' },
   { id: 'u2', nombre: 'Juan Pérez', rol: 'Miembro', esAdmin: false, telefono: '8112340001' },
@@ -126,7 +135,7 @@ function UsuariosPantalla({ onClose }) {
   )
 }
 
-function CitaBlock({ cita, onClick }) {
+function CitaBlock({ cita, onClick, compact: forceCompact = false }) {
   const cfg = ESTADO_CONFIG[cita.estado] || ESTADO_CONFIG.Apartada
   const startMin = timeToMinutes(cita.hora)
   const top = minutesToPx(startMin)
@@ -136,7 +145,7 @@ function CitaBlock({ cita, onClick }) {
   const left = cita._left ?? 0
   const width = cita._width ?? 1
   const numCols = cita._numCols ?? 1
-  const compact = numCols > 1
+  const compact = forceCompact || numCols > 1
 
   return (
     <button
@@ -200,7 +209,6 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
           })}
         </div>
       </div>
-      {/* Fade + badge — se ocultan al hacer scroll o en desktop */}
       {!hideHint && (
         <>
           <div
@@ -229,19 +237,17 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
   )
 }
 
-function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true }) {
+function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true, compactCitas = false }) {
   const { normal, scrollClusters } = calcularLayout(citas)
 
   return (
     <div className="flex-1 relative border-l border-gray-200 dark:border-gray-800">
-      {/* Hour grid lines */}
       {HOURS.map(hour => (
         <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="border-b border-gray-100 dark:border-gray-800">
           <div className="border-b border-gray-50 dark:border-gray-800/50 h-1/2" />
         </div>
       ))}
       {esHoy && <div className="absolute inset-0 bg-blue-50/30 dark:bg-blue-900/10 pointer-events-none" />}
-      {/* Time line */}
       {esHoy && nowPx >= 0 && nowPx <= HOURS.length * CELL_HEIGHT && (
         <>
           <div style={{ top: `${nowPx}px` }} className="absolute left-0 right-0 flex items-center pointer-events-none z-20">
@@ -257,13 +263,10 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
           </button>
         </>
       )}
-      {/* Normal citas — full width divided equally */}
       <div className="absolute inset-0">
-        {normal.map(cita => <CitaBlock key={cita.id} cita={cita} onClick={onClick} />)}
+        {normal.map(cita => <CitaBlock key={cita.id} cita={cita} onClick={onClick} compact={compactCitas} />)}
       </div>
-      {/* Scroll clusters — >3 citas simultáneas, scroll horizontal en mobile */}
       {scrollClusters.map((cluster, i) => {
-        // On desktop show more cols, no scroll needed
         const isDesktop = window.innerWidth >= 768
         const MAX_VISIBLE = isDesktop ? cluster.totalCols : 3
         const innerWidthPct = cluster.totalCols / MAX_VISIBLE * 100
@@ -300,6 +303,10 @@ export default function Calendario() {
 
   const tresDias = Array.from({ length: 3 }, (_, i) => addDays(fechaActual, i))
 
+  // Vista semana — siempre empieza en lunes
+  const lunesSemana = getLunesDeSemana(fechaActual)
+  const semana = Array.from({ length: 7 }, (_, i) => addDays(lunesSemana, i))
+
   useEffect(() => {
     const interval = setInterval(() => setNowPx(getCurrentTimePx()), 60000)
     return () => clearInterval(interval)
@@ -317,7 +324,18 @@ export default function Calendario() {
     setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
   }
 
-  const tituloNav = vista === 'dia' ? formatDateLong(fechaActual) : `${formatDate(tresDias[0])} — ${formatDate(tresDias[2])}`
+  const navDelta = vista === 'dia' ? 1 : vista === '3dias' ? 3 : 7
+
+  const tituloNav = vista === 'dia'
+    ? formatDateLong(fechaActual)
+    : vista === '3dias'
+    ? `${formatDate(tresDias[0])} — ${formatDate(tresDias[2])}`
+    : `${formatDate(semana[0])} — ${formatDate(semana[6])}`
+
+  // Opciones de vista — semana solo en lg+
+  const VISTAS_MOVIL = ['dia', '3dias']
+  const VISTAS_DESKTOP = ['dia', '3dias', 'semana']
+  const VISTA_LABELS = { dia: 'Día', '3dias': '3 días', semana: 'Semana' }
 
   return (
     <div className="flex flex-col flex-1 bg-white dark:bg-gray-900 overflow-hidden">
@@ -326,17 +344,26 @@ export default function Calendario() {
       {/* Header */}
       <div className="px-4 pt-6 pb-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
 
-        {/* Row 1: título | toggle + usuarios */}
+        {/* Row 1: título | toggle */}
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Calendar size={20} />
             Calendario
           </h1>
           <div className="flex items-center gap-2">
-            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
-              {['dia', '3dias'].map(v => (
+            {/* Móvil y tablet: Día + 3 días */}
+            <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
+              {VISTAS_MOVIL.map(v => (
                 <button key={v} onClick={() => setVista(v)} className={`px-2.5 py-1.5 rounded-md text-xs font-bold transition-colors whitespace-nowrap ${vista === v ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
-                  {v === 'dia' ? 'Día' : '3 días'}
+                  {VISTA_LABELS[v]}
+                </button>
+              ))}
+            </div>
+            {/* Desktop: Día + 3 días + Semana */}
+            <div className="hidden lg:flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
+              {VISTAS_DESKTOP.map(v => (
+                <button key={v} onClick={() => setVista(v)} className={`px-2.5 py-1.5 rounded-md text-xs font-bold transition-colors whitespace-nowrap ${vista === v ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
+                  {VISTA_LABELS[v]}
                 </button>
               ))}
             </div>
@@ -351,11 +378,11 @@ export default function Calendario() {
 
         {/* Row 2: navegación de fecha centrada */}
         <div className="flex items-center justify-between">
-          <button onClick={() => setFechaActual(prev => addDays(prev, vista === 'dia' ? -1 : -3))} className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+          <button onClick={() => setFechaActual(prev => addDays(prev, -navDelta))} className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
             <ChevronLeft size={18} />
           </button>
           <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 capitalize">{tituloNav}</span>
-          <button onClick={() => setFechaActual(prev => addDays(prev, vista === 'dia' ? 1 : 3))} className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+          <button onClick={() => setFechaActual(prev => addDays(prev, navDelta))} className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
             <ChevronRight size={18} />
           </button>
         </div>
@@ -424,6 +451,57 @@ export default function Calendario() {
                   esHoy={d === todayStr()}
                   nowPx={nowPx}
                   showNowDot={colIdx === 0}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── VISTA SEMANA (solo desktop lg+) ── */}
+      {vista === 'semana' && (
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Header días */}
+          <div className="flex shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <div className="w-10 shrink-0" />
+            {semana.map((d) => {
+              const esHoyD = d === todayStr()
+              return (
+                <button
+                  key={d}
+                  onClick={() => { setFechaActual(d); setVista('dia') }}
+                  className="flex-1 flex flex-col items-center py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-w-0"
+                >
+                  <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase">{getDayLabel(d)}</span>
+                  <span className={`text-sm font-bold mt-0.5 w-7 h-7 flex items-center justify-center rounded-full ${esHoyD ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-800 dark:text-gray-200'}`}>
+                    {parseInt(d.split('-')[2])}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          {/* Grid */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto">
+            <div className="flex" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+              <div className="w-10 shrink-0 select-none">
+                {HOURS.map(hour => (
+                  <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
+                    <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
+                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {semana.map((d, colIdx) => (
+                <CalendarColumn
+                  key={d}
+                  citas={getCitasPorFecha(d)}
+                  onClick={setCitaSeleccionada}
+                  onAddNew={() => { setFechaActual(d); navigate('/quickbook') }}
+                  esHoy={d === todayStr()}
+                  nowPx={nowPx}
+                  showNowDot={colIdx === 0}
+                  compactCitas={true}
                 />
               ))}
             </div>
