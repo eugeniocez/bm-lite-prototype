@@ -520,12 +520,46 @@ export default function Calendario() {
 function CitaDetalle({ cita, onCambiarEstado }) {
   const cfg = ESTADO_CONFIG[cita.estado]
   const transiciones = TRANSICIONES[cita.estado] || []
+  const [confirmandoCancelar, setConfirmandoCancelar] = useState(false)
+
   const ACCION_COLORS = {
     Confirmada: 'bg-gray-900 text-white hover:bg-gray-800',
     SinConfirmar: 'bg-gray-100 text-gray-900 border border-gray-200 hover:bg-gray-200',
     Cancelada: 'bg-red-100 text-red-700 border border-red-200 hover:bg-red-200',
     NoShow: 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200',
   }
+
+  const handleAccion = (est) => {
+    if (est === 'Cancelada') {
+      setConfirmandoCancelar(true)
+    } else {
+      onCambiarEstado(cita, est)
+    }
+  }
+
+  if (confirmandoCancelar) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl p-4 text-center">
+          <p className="text-red-700 dark:text-red-400 font-semibold text-sm mb-1">¿Cancelar esta cita?</p>
+          <p className="text-red-500 dark:text-red-500 text-xs">Se enviará un SMS de cancelación a {cita.nombreCliente.split(' ')[0]}.</p>
+        </div>
+        <button
+          onClick={() => onCambiarEstado(cita, 'Cancelada')}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-red-600 text-white hover:bg-red-700"
+        >
+          Sí, cancelar cita
+        </button>
+        <button
+          onClick={() => setConfirmandoCancelar(false)}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          Volver
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2.5 border border-gray-100 dark:border-gray-700">
@@ -540,7 +574,7 @@ function CitaDetalle({ cita, onCambiarEstado }) {
           <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide mb-2">Cambiar estado</p>
           <div className="space-y-2">
             {transiciones.map(est => (
-              <button key={est} onClick={() => onCambiarEstado(cita, est)} className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${ACCION_COLORS[est] || 'bg-gray-100 text-gray-700'}`}>
+              <button key={est} onClick={() => handleAccion(est)} className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${ACCION_COLORS[est] || 'bg-gray-100 text-gray-700'}`}>
                 {ACCION_LABELS[est] || est}
               </button>
             ))}
