@@ -1,0 +1,196 @@
+import { useState, useRef } from 'react'
+import { Zap, Clock } from 'lucide-react'
+import { useCitasStore } from '../store/citas'
+import { useDirectorioStore } from '../store/directorio'
+import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
+import { sms } from '../utils/sms-templates'
+import SMSModal from '../components/shared/SMSModal'
+import PageHeader from '../components/shared/PageHeader'
+
+export default function QuickBook() {
+  const agregarCita = useCitasStore(s => s.agregarCita)
+  const contactos = useDirectorioStore(s => s.contactos)
+  const buscarPorCelular = useDirectorioStore(s => s.buscarPorCelular)
+  const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
+  const actualizarUltimaVisita = useDirectorioStore(s => s.actualizarUltimaVisita)
+
+  const [celular, setCelular] = useState('')
+  const [nombre, setNombre] = useState('')
+  const [fecha, setFecha] = useState(todayStr())
+  const [hora, setHora] = useState('10:00')
+  const [nota, setNota] = useState('')
+  const [esWalkIn, setEsWalkIn] = useState(false)
+  const [smsModal, setSmsModal] = useState(null)
+  const [exito, setExito] = useState(false)
+  const [sugerencias, setSugerencias] = useState([])
+  const [showSugerencias, setShowSugerencias] = useState(false)
+  const nombreRef = useRef(null)
+
+  const handleNombre = (val) => {
+    setNombre(val)
+    if (val.trim().length >= 2) {
+      const matches = contactos.filter(c =>
+        c.nombre.toLowerCase().includes(val.toLowerCase())
+      ).slice(0, 5)
+      setSugerencias(matches)
+      setShowSugerencias(matches.length > 0)
+    } else {
+      setSugerencias([])
+      setShowSugerencias(false)
+    }
+  }
+
+  const handleSeleccionarContacto = (contacto) => {
+    setNombre(contacto.nombre)
+    setCelular(contacto.celular)
+    setSugerencias([])
+    setShowSugerencias(false)
+  }
+
+  const handleCelular = (val) => {
+    const clean = val.replace(/\D/g, '').slice(0, 10)
+    setCelular(clean)
+    if (clean.length === 10) {
+      const contacto = buscarPorCelular(clean)
+      if (contacto) { setNombre(contacto.nombre); setShowSugerencias(false) }
+    }
+  }
+
+  const handleWalkIn = () => {
+    const nuevoEstado = !esWalkIn
+    setEsWalkIn(nuevoEstado)
+    if (nuevoEstado) { setFecha(todayStr()); setHora(nowTimeStr()) }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!celular || !nombre || !fecha || !hora) return
+    const estado = esWalkIn ? 'WalkIn' : 'Apartada'
+    const origen = esWalkIn ? 'WalkIn' : 'QuickBook'
+    agregarCita({ nombreCliente: nombre, celular, fecha, hora, nota: nota || null, estado, origen })
+    agregarOActualizar({ nombre, celular })
+    if (esWalkIn) actualizarUltimaVisita(celular)
+    const mensajeSms = esWalkIn ? sms.walkIn(nombre) : sms.confirmacion(nombre, formatDate(fecha), hora)
+    setSmsModal({ to: celular, mensaje: mensajeSms, titulo: esWalkIn ? 'SMS de agradecimiento (1h delay)' : 'SMS de confirmación' })
+    setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
+    setSugerencias([]); setShowSugerencias(false)
+    setExito(true)
+    setTimeout(() => setExito(false), 3000)
+  }
+
+  const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-base focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all shadow-sm"
+
+  const WalkInBtn = (
+    <button
+      type="button"
+      onClick={handleWalkIn}
+      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold border transition-all ${
+        esWalkIn
+          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-gray-900 dark:border-white'
+          : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-900 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
+      }`}
+    >
+      <Clock size={15} />
+      Walk-in
+    </button>
+  )
+
+  return (
+    <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} action={WalkInBtn} />
+
+      <div className="px-5 py-5 space-y-4">
+        {esWalkIn && (
+          <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
+            <p className="text-gray-900 dark:text-white text-sm font-semibold">Modo cliente sin cita activo</p>
+            <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">Fecha y hora precargadas con el momento actual</p>
+          </div>
+        )}
+        {exito && (
+          <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
+            <p className="text-gray-900 dark:text-white text-sm font-semibold">✓ Cita creada correctamente</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+          <div className="relative">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Nombre *</label>
+            <input
+              ref={nombreRef}
+              type="text"
+              value={nombre}
+              onChange={e => handleNombre(e.target.value)}
+              onBlur={() => setTimeout(() => setShowSugerencias(false), 150)}
+              onFocus={() => sugerencias.length > 0 && setShowSugerencias(true)}
+              placeholder="Nombre del cliente"
+              required
+              className={inputClass}
+              autoComplete="off"
+            />
+            {showSugerencias && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-30 overflow-hidden">
+                {sugerencias.map(c => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => handleSeleccionarContacto(c)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left border-b border-gray-100 dark:border-gray-700 last:border-0"
+                  >
+                    <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-gray-700 dark:text-gray-300 font-bold text-xs">{c.nombre[0]}</span>
+                    </div>
+                    <div>
+                      <p className="text-gray-900 dark:text-white text-sm font-semibold">{c.nombre}</p>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs">{c.celular}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={celular}
+              onChange={e => handleCelular(e.target.value)}
+              placeholder="10 dígitos"
+              required
+              className={inputClass}
+            />
+            {celular.length === 10 && buscarPorCelular(celular) && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 ml-1 font-medium">✓ Cliente encontrado en directorio</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Fecha *</label>
+              <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} required disabled={esWalkIn} className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`} />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Hora *</label>
+              <input type="time" value={hora} onChange={e => setHora(e.target.value)} required disabled={esWalkIn} className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`} />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+              Nota interna <span className="text-gray-400 font-normal normal-case">(opcional · el cliente no la ve)</span>
+            </label>
+            <input type="text" autoComplete="off" value={nota} onChange={e => setNota(e.target.value)} placeholder='Ej: "fade corto", "viene con Pepe"' className={inputClass} />
+          </div>
+
+          <button type="submit" className="w-full bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-4 rounded-xl text-base hover:bg-gray-800 dark:hover:bg-gray-100 active:scale-95 transition-all mt-2 shadow-sm">
+            {esWalkIn ? 'Registrar cliente sin cita' : 'Crear cita'}
+          </button>
+        </form>
+      </div>
+
+      <SMSModal isOpen={!!smsModal} onClose={() => setSmsModal(null)} to={smsModal?.to} mensaje={smsModal?.mensaje} titulo={smsModal?.titulo} />
+    </div>
+  )
+}
