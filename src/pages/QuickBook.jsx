@@ -5,6 +5,7 @@ import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
 import { sms } from '../utils/sms-templates'
 import SMSModal from '../components/shared/SMSModal'
+import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 
 export default function QuickBook() {
@@ -23,7 +24,7 @@ export default function QuickBook() {
   const [nota, setNota] = useState('')
   const [esWalkIn, setEsWalkIn] = useState(false)
   const [smsModal, setSmsModal] = useState(null)
-  const [exito, setExito] = useState(false)
+  const [toast, setToast] = useState(false)
   const [sugerencias, setSugerencias] = useState([])
   const [showSugerencias, setShowSugerencias] = useState(false)
   const [conflicto, setConflicto] = useState(null)
@@ -77,8 +78,7 @@ export default function QuickBook() {
     setSmsModal({ to: celular, mensaje: mensajeSms, titulo: esWalkIn ? 'SMS de agradecimiento (1h delay)' : 'SMS de confirmación' })
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
-    setExito(true)
-    setTimeout(() => setExito(false), 3000)
+    setToast(true)
   }
 
   const handleSubmit = (e) => {
@@ -133,11 +133,6 @@ export default function QuickBook() {
           <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
             <p className="text-gray-900 dark:text-white text-sm font-semibold">Modo cliente sin cita activo</p>
             <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">Fecha y hora precargadas con el momento actual</p>
-          </div>
-        )}
-        {exito && (
-          <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
-            <p className="text-gray-900 dark:text-white text-sm font-semibold">✓ Cita creada correctamente</p>
           </div>
         )}
 
@@ -237,6 +232,7 @@ export default function QuickBook() {
       </div>
 
       <SMSModal isOpen={!!smsModal} onClose={() => setSmsModal(null)} to={smsModal?.to} mensaje={smsModal?.mensaje} titulo={smsModal?.titulo} />
+      <Toast visible={toast} mensaje="Cita creada correctamente" onClose={() => setToast(false)} />
     </div>
   )
 }
