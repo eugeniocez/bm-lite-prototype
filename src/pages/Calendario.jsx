@@ -527,9 +527,10 @@ function CitaDetalle({ cita, onCambiarEstado }) {
   const ahora = new Date()
   const noShowDisponible = ahora >= new Date(citaDateTime.getTime() + 30 * 60 * 1000)
 
-  const transicionesFiltradas = transiciones.filter(est =>
-    est === 'NoShow' ? noShowDisponible : true
-  )
+  const transicionesFiltradas = transiciones.filter(est => {
+    if (noShowDisponible) return est !== 'Cancelada' && est !== 'SinConfirmar'
+    return est !== 'NoShow'
+  })
 
   const ACCION_COLORS = {
     Confirmada: 'bg-gray-900 text-white hover:bg-gray-800',
