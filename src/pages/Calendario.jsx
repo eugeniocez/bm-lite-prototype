@@ -233,7 +233,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
       {/* Hour grid lines */}
       {HOURS.map(hour => (
         <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="border-b border-gray-100 dark:border-gray-800">
-          <div className="border-b border-gray-50 h-1/2" />
+          <div className="border-b border-gray-50 dark:border-gray-800/50 h-1/2" />
         </div>
       ))}
       {esHoy && <div className="absolute inset-0 bg-blue-50/30 dark:bg-blue-900/10 pointer-events-none" />}
