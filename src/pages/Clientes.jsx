@@ -78,7 +78,7 @@ export default function Clientes() {
       {contactoSeleccionado ? (
         <>
           {/* Mobile — pantalla completa */}
-          <div className="md:hidden fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col">
+          <div className="md:hidden fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 z-50 flex flex-col">
             <ContactoDetalle
               contacto={contactoSeleccionado}
               onClose={() => setContactoSeleccionado(null)}
