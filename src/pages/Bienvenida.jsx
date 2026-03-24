@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Check, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 const BARBERIA = 'BarberMonster'
 
@@ -19,10 +19,12 @@ export default function Bienvenida() {
 
   return (
     <div className="fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-8 text-center">
-      {/* Ícono de éxito */}
-      <div className="w-20 h-20 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mb-8 shadow-lg">
-        <Check size={40} className="text-white dark:text-gray-900" strokeWidth={2.5} />
-      </div>
+      {/* Logo isotipo */}
+      <img
+        src="/apple-touch-icon.png"
+        alt="BarberMonster"
+        className="w-24 h-24 mb-8"
+      />
 
       {/* Bienvenida */}
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
