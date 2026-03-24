@@ -60,11 +60,11 @@ export const useDirectorioStore = create(
         }
       },
 
-      actualizarUltimaVisita: (celular) => set(state => ({
-        contactos: state.contactos.map(c =>
-          c.celular === celular ? { ...c, ultimaVisita: todayStr() } : c
-        )
-      })),
+      actualizarUltimaVisita: (celular, fecha) => set(state => ({
+  contactos: state.contactos.map(c =>
+    c.celular === celular ? { ...c, ultimaVisita: fecha || todayStr() } : c
+  )
+})),
 
       incrementarNoShows: (celular) => set(state => ({
         contactos: state.contactos.map(c =>

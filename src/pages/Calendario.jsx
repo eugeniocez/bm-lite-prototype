@@ -269,7 +269,7 @@ export default function Calendario() {
   const handleCambiarEstado = (cita, nuevoEstado) => {
     cambiarEstado(cita.id, nuevoEstado)
     if (nuevoEstado === 'NoShow') incrementarNoShows(cita.celular)
-    else if (nuevoEstado === 'Confirmada') actualizarUltimaVisita(cita.celular)
+    else if (nuevoEstado === 'Confirmada') actualizarUltimaVisita(cita.celular, cita.fecha)
     setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
   }
 

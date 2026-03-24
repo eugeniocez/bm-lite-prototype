@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
-import { daysSince, formatDate } from '../utils/helpers'
+import { daysSince, formatDate, todayStr } from '../utils/helpers'
 import { ESTADO_CONFIG } from '../utils/estados'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
@@ -205,8 +205,28 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
 
 function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPanel = false }) {
   const getCitasPorCliente = useCitasStore(s => s.getCitasPorCliente)
-  const historial = getCitasPorCliente(contacto.celular).slice(0, 5)
-  const dias = daysSince(contacto.ultimaVisita)
+  const todasLasCitas = getCitasPorCliente(contacto.celular)
+  const historial = todasLasCitas
+
+  // Calcular última visita real desde citas confirmadas o walk-in
+  const hoy = todayStr()
+
+  // Solo citas pasadas (o de hoy) confirmadas/walk-in como última visita
+  const citasVisitadas = todasLasCitas.filter(c =>
+    (c.estado === 'Confirmada' || c.estado === 'WalkIn') && c.fecha <= hoy
+  )
+  const ultimaVisitaReal = citasVisitadas.length > 0
+    ? citasVisitadas.reduce((latest, c) =>
+        c.fecha > latest ? c.fecha : latest, citasVisitadas[0].fecha
+      )
+    : contacto.ultimaVisita
+
+  const dias = daysSince(ultimaVisitaReal)
+
+  // Próxima cita — solo fechas estrictamente futuras, estados activos
+  const proximaCita = todasLasCitas
+    .filter(c => c.fecha > hoy && !['Cancelada', 'NoShow'].includes(c.estado))
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0] || null
 
   return (
     <div className="flex flex-col h-full">
@@ -232,13 +252,19 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
       <div className="flex-1 overflow-y-auto px-5 py-5 pb-24 md:pb-5 space-y-5">
         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2.5 border border-gray-100 dark:border-gray-700">
           <Row label="Celular" value={contacto.celular} />
-          <Row label="Última visita" value={contacto.ultimaVisita ? formatDate(contacto.ultimaVisita) : 'Sin visitas'} />
+          <Row label="Última visita" value={ultimaVisitaReal ? formatDate(ultimaVisitaReal) : 'Sin visitas'} />
           <Row label="No-shows" value={
             <span className={contacto.totalNoShows > 0 ? 'text-red-500 font-semibold' : 'text-gray-900 dark:text-white font-semibold'}>
               {contacto.totalNoShows}
             </span>
           } />
-          {dias > 30 && dias !== Infinity && (
+          {proximaCita ? (
+            <Row label="Próxima visita" value={
+              <span className="text-green-700 dark:text-green-400 font-bold text-xs bg-green-50 dark:bg-green-900/30 px-2 py-1 rounded-lg">
+                ✓ {formatDate(proximaCita.fecha)} · {proximaCita.hora}
+              </span>
+            } />
+          ) : dias > 30 && dias !== Infinity && (
             <Row label="Sin visita" value={<span className="text-gray-500 dark:text-gray-400 font-semibold">{dias} días</span>} />
           )}
           {contacto.nota && <Row label="Nota" value={contacto.nota} />}
