@@ -264,7 +264,7 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
                 ✓ {formatDate(proximaCita.fecha)} · {proximaCita.hora}
               </span>
             } />
-          ) : dias > 30 && dias !== Infinity && (
+          ) : dias !== Infinity && (
             <Row label="Sin visita" value={<span className="text-gray-500 dark:text-gray-400 font-semibold">{dias} días</span>} />
           )}
           {contacto.nota && <Row label="Nota" value={contacto.nota} />}
