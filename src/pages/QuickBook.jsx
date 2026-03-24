@@ -3,8 +3,6 @@ import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
-import { sms } from '../utils/sms-templates'
-import SMSModal from '../components/shared/SMSModal'
 import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 
@@ -23,7 +21,6 @@ export default function QuickBook() {
   const [hora, setHora] = useState('10:00')
   const [nota, setNota] = useState('')
   const [esWalkIn, setEsWalkIn] = useState(false)
-  const [smsModal, setSmsModal] = useState(null)
   const [toast, setToast] = useState(false)
   const [sugerencias, setSugerencias] = useState([])
   const [showSugerencias, setShowSugerencias] = useState(false)
@@ -74,8 +71,6 @@ export default function QuickBook() {
     agregarCita({ nombreCliente: nombre, celular, fecha, hora, nota: nota || null, estado, origen })
     agregarOActualizar({ nombre, celular })
     if (esWalkIn) actualizarUltimaVisita(celular)
-    const mensajeSms = esWalkIn ? sms.walkIn(nombre) : sms.confirmacion(nombre, formatDate(fecha), hora)
-    setSmsModal({ to: celular, mensaje: mensajeSms, titulo: esWalkIn ? 'SMS de agradecimiento (1h delay)' : 'SMS de confirmación' })
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setToast(true)
@@ -84,7 +79,6 @@ export default function QuickBook() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!celular || !nombre || !fecha || !hora) return
-    // Detectar conflicto — cita SinConfirmar en el mismo horario
     const citasDelDia = getCitasPorFecha(fecha)
     const citaConflicto = citasDelDia.find(c => c.hora === hora && c.estado === 'SinConfirmar')
     if (citaConflicto) {
@@ -231,7 +225,6 @@ export default function QuickBook() {
         </form>
       </div>
 
-      <SMSModal isOpen={!!smsModal} onClose={() => setSmsModal(null)} to={smsModal?.to} mensaje={smsModal?.mensaje} titulo={smsModal?.titulo} />
       <Toast visible={toast} mensaje="Cita creada correctamente" onClose={() => setToast(false)} />
     </div>
   )

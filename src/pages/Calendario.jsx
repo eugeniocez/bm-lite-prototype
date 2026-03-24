@@ -6,9 +6,7 @@ import { useDirectorioStore } from '../store/directorio'
 import { todayStr, addDays, formatDateLong, formatDate } from '../utils/helpers'
 import { ESTADO_CONFIG, TRANSICIONES, ACCION_LABELS } from '../utils/estados'
 import { calcularLayout } from '../utils/overlap'
-import { sms } from '../utils/sms-templates'
 import Modal from '../components/shared/Modal'
-import SMSModal from '../components/shared/SMSModal'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 const HOUR_START = 7
@@ -31,12 +29,10 @@ function getDayLabel(dateStr) {
   const d = new Date(`${dateStr}T12:00:00`)
   return DIAS[d.getDay()]
 }
-
-// Obtiene el lunes de la semana de una fecha dada
 function getLunesDeSemana(dateStr) {
   const d = new Date(`${dateStr}T12:00:00`)
-  const day = d.getDay() // 0=Dom, 1=Lun...
-  const diff = day === 0 ? -6 : 1 - day // ajuste para que semana empiece en lunes
+  const day = d.getDay()
+  const diff = day === 0 ? -6 : 1 - day
   d.setDate(d.getDate() + diff)
   return d.toISOString().split('T')[0]
 }
@@ -71,7 +67,6 @@ function UsuariosPantalla({ onClose }) {
         <button onClick={goBack} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"><ArrowLeft size={22} /></button>
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">{vista === 'lista' ? 'Usuarios' : vista === 'editar' ? 'Editar Miembro' : 'Agregar Miembro'}</h1>
       </div>
-
       {vista === 'lista' && (
         <div className="flex-1 overflow-y-auto pb-8">
           <div className="px-5 pt-5 pb-1"><p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tú (Administrador)</p></div>
@@ -99,7 +94,6 @@ function UsuariosPantalla({ onClose }) {
           </div>
         </div>
       )}
-
       {vista === 'editar' && seleccionado && (
         <div className="flex-1 overflow-y-auto px-5 py-6 space-y-5">
           <div>
@@ -117,7 +111,6 @@ function UsuariosPantalla({ onClose }) {
           </>)}
         </div>
       )}
-
       {vista === 'agregar' && (
         <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
           <div>
@@ -178,28 +171,15 @@ function CitaBlock({ cita, onClick, compact: forceCompact = false }) {
 
 function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint = false }) {
   const [scrolled, setScrolled] = useState(false)
-
   return (
     <div className="absolute left-0 right-0 z-10" style={{ top: `${cluster.topPx}px`, height: `${cluster.heightPx + 8}px` }}>
-      <div
-        className="absolute inset-0 overflow-x-auto"
-        style={{ scrollbarWidth: "none" }}
-        onScroll={e => setScrolled(e.currentTarget.scrollLeft > 10)}
-      >
+      <div className="absolute inset-0 overflow-x-auto" style={{ scrollbarWidth: "none" }} onScroll={e => setScrolled(e.currentTarget.scrollLeft > 10)}>
         <div style={{ width: `${innerWidthPct}%`, height: "100%", position: "relative" }}>
           {cluster.citas.map(cita => {
             const cfg = ESTADO_CONFIG[cita.estado] || ESTADO_CONFIG.Apartada
             return (
-              <button
-                key={cita.id}
-                onClick={() => onClick(cita)}
-                style={{
-                  top: `${cita._topInCluster + 2}px`,
-                  height: `${cita._height}px`,
-                  left: `calc(${cita._colIdx * colWidthPct}% + 2px)`,
-                  width: `calc(${colWidthPct}% - 4px)`,
-                  position: "absolute",
-                }}
+              <button key={cita.id} onClick={() => onClick(cita)}
+                style={{ top: `${cita._topInCluster + 2}px`, height: `${cita._height}px`, left: `calc(${cita._colIdx * colWidthPct}% + 2px)`, width: `calc(${colWidthPct}% - 4px)`, position: "absolute" }}
                 className={`rounded-lg px-1.5 py-1 flex flex-col justify-center text-left overflow-hidden shadow-sm active:scale-95 transition-transform ${cfg.cardBg} ${cfg.cardBorder}`}
               >
                 <p className={`font-bold truncate leading-tight ${cfg.cardText}`} style={{ fontSize: "10px" }}>{cita.hora}</p>
@@ -211,25 +191,11 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
       </div>
       {!hideHint && (
         <>
-          <div
-            className="absolute top-0 right-0 bottom-0 pointer-events-none z-20 transition-opacity duration-200"
-            style={{
-              width: "30%",
-              background: "linear-gradient(to right, transparent, var(--scroll-fade, rgba(255,255,255,0.97)))",
-              opacity: scrolled ? 0 : 1,
-            }}
-          />
-          <div
-            className="absolute right-2 pointer-events-none z-30 flex items-center justify-center transition-opacity duration-200"
-            style={{
-              top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`,
-              transform: "translateY(-50%)",
-              opacity: scrolled ? 0 : 1,
-            }}
-          >
-            <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-              +{cluster.hiddenCount}
-            </span>
+          <div className="absolute top-0 right-0 bottom-0 pointer-events-none z-20 transition-opacity duration-200"
+            style={{ width: "30%", background: "linear-gradient(to right, transparent, var(--scroll-fade, rgba(255,255,255,0.97)))", opacity: scrolled ? 0 : 1 }} />
+          <div className="absolute right-2 pointer-events-none z-30 flex items-center justify-center transition-opacity duration-200"
+            style={{ top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`, transform: "translateY(-50%)", opacity: scrolled ? 0 : 1 }}>
+            <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">+{cluster.hiddenCount}</span>
           </div>
         </>
       )}
@@ -239,7 +205,6 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
 
 function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true, compactCitas = false }) {
   const { normal, scrollClusters } = calcularLayout(citas)
-
   return (
     <div className="flex-1 relative border-l border-gray-200 dark:border-gray-800">
       {HOURS.map(hour => (
@@ -254,11 +219,8 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
             {showNowDot && <div className="w-2.5 h-2.5 rounded-full bg-red-500 -ml-1.5 shrink-0" />}
             <div className="flex-1 h-px bg-red-400" />
           </div>
-          <button
-            onClick={onAddNew}
-            style={{ top: `${nowPx + 6}px`, height: "40px" }}
-            className="absolute left-1 right-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 bg-white/70 dark:bg-gray-900/70 flex items-center justify-center z-10 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 transition-colors"
-          >
+          <button onClick={onAddNew} style={{ top: `${nowPx + 6}px`, height: "40px" }}
+            className="absolute left-1 right-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 bg-white/70 dark:bg-gray-900/70 flex items-center justify-center z-10 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 transition-colors">
             <span className="text-xs text-gray-400 dark:text-gray-600 font-medium">+ Agregar cita</span>
           </button>
         </>
@@ -271,16 +233,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
         const MAX_VISIBLE = isDesktop ? cluster.totalCols : 3
         const innerWidthPct = cluster.totalCols / MAX_VISIBLE * 100
         const colWidthPct = 100 / cluster.totalCols
-        return (
-          <ScrollCluster
-            key={i}
-            cluster={cluster}
-            innerWidthPct={innerWidthPct}
-            colWidthPct={colWidthPct}
-            onClick={onClick}
-            hideHint={isDesktop}
-          />
-        )
+        return <ScrollCluster key={i} cluster={cluster} innerWidthPct={innerWidthPct} colWidthPct={colWidthPct} onClick={onClick} hideHint={isDesktop} />
       })}
     </div>
   )
@@ -291,7 +244,6 @@ export default function Calendario() {
   const [vista, setVista] = useState('dia')
   const [fechaActual, setFechaActual] = useState(todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
-  const [smsModal, setSmsModal] = useState(null)
   const [usuariosOpen, setUsuariosOpen] = useState(false)
   const [nowPx, setNowPx] = useState(getCurrentTimePx())
   const scrollRef = useRef(null)
@@ -302,8 +254,6 @@ export default function Calendario() {
   const actualizarUltimaVisita = useDirectorioStore(s => s.actualizarUltimaVisita)
 
   const tresDias = Array.from({ length: 3 }, (_, i) => addDays(fechaActual, i))
-
-  // Vista semana — siempre empieza en lunes
   const lunesSemana = getLunesDeSemana(fechaActual)
   const semana = Array.from({ length: 7 }, (_, i) => addDays(lunesSemana, i))
 
@@ -318,21 +268,18 @@ export default function Calendario() {
 
   const handleCambiarEstado = (cita, nuevoEstado) => {
     cambiarEstado(cita.id, nuevoEstado)
-    if (nuevoEstado === 'NoShow') { incrementarNoShows(cita.celular); setSmsModal({ to: cita.celular, mensaje: sms.noShow(cita.nombreCliente), titulo: 'SMS de no-show' }) }
-    else if (nuevoEstado === 'Cancelada') { setSmsModal({ to: cita.celular, mensaje: sms.cancelacion(cita.nombreCliente), titulo: 'SMS de cancelación' }) }
-    else if (nuevoEstado === 'Confirmada') { actualizarUltimaVisita(cita.celular) }
+    if (nuevoEstado === 'NoShow') incrementarNoShows(cita.celular)
+    else if (nuevoEstado === 'Confirmada') actualizarUltimaVisita(cita.celular)
     setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
   }
 
   const navDelta = vista === 'dia' ? 1 : vista === '3dias' ? 3 : 7
-
   const tituloNav = vista === 'dia'
     ? formatDateLong(fechaActual)
     : vista === '3dias'
     ? `${formatDate(tresDias[0])} — ${formatDate(tresDias[2])}`
     : `${formatDate(semana[0])} — ${formatDate(semana[6])}`
 
-  // Opciones de vista — semana solo en lg+
   const VISTAS_MOVIL = ['dia', '3dias']
   const VISTAS_DESKTOP = ['dia', '3dias', 'semana']
   const VISTA_LABELS = { dia: 'Día', '3dias': '3 días', semana: 'Semana' }
@@ -341,17 +288,12 @@ export default function Calendario() {
     <div className="flex flex-col flex-1 bg-white dark:bg-gray-900 overflow-hidden">
       {usuariosOpen && <UsuariosPantalla onClose={() => setUsuariosOpen(false)} />}
 
-      {/* Header */}
       <div className="px-4 pt-6 pb-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-
-        {/* Row 1: título | toggle */}
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Calendar size={20} />
-            Calendario
+            <Calendar size={20} />Calendario
           </h1>
           <div className="flex items-center gap-2">
-            {/* Móvil y tablet: Día + 3 días */}
             <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
               {VISTAS_MOVIL.map(v => (
                 <button key={v} onClick={() => setVista(v)} className={`px-2.5 py-1.5 rounded-md text-xs font-bold transition-colors whitespace-nowrap ${vista === v ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
@@ -359,7 +301,6 @@ export default function Calendario() {
                 </button>
               ))}
             </div>
-            {/* Desktop: Día + 3 días + Semana */}
             <div className="hidden lg:flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
               {VISTAS_DESKTOP.map(v => (
                 <button key={v} onClick={() => setVista(v)} className={`px-2.5 py-1.5 rounded-md text-xs font-bold transition-colors whitespace-nowrap ${vista === v ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
@@ -375,8 +316,6 @@ export default function Calendario() {
             */}
           </div>
         </div>
-
-        {/* Row 2: navegación de fecha centrada */}
         <div className="flex items-center justify-between">
           <button onClick={() => setFechaActual(prev => addDays(prev, -navDelta))} className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
             <ChevronLeft size={18} />
@@ -386,10 +325,8 @@ export default function Calendario() {
             <ChevronRight size={18} />
           </button>
         </div>
-
       </div>
 
-      {/* ── VISTA DÍA ── */}
       {vista === 'dia' && (
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
@@ -402,19 +339,11 @@ export default function Calendario() {
                 </div>
               ))}
             </div>
-            <CalendarColumn
-              citas={getCitasPorFecha(fechaActual)}
-              onClick={setCitaSeleccionada}
-              onAddNew={() => navigate('/quickbook')}
-              esHoy={fechaActual === todayStr()}
-              nowPx={nowPx}
-              showNowDot={true}
-            />
+            <CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} />
           </div>
         </div>
       )}
 
-      {/* ── VISTA 3 DÍAS ── */}
       {vista === '3dias' && (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
@@ -443,35 +372,21 @@ export default function Calendario() {
                 ))}
               </div>
               {tresDias.map((d, colIdx) => (
-                <CalendarColumn
-                  key={d}
-                  citas={getCitasPorFecha(d)}
-                  onClick={setCitaSeleccionada}
-                  onAddNew={() => navigate('/quickbook')}
-                  esHoy={d === todayStr()}
-                  nowPx={nowPx}
-                  showNowDot={colIdx === 0}
-                />
+                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} />
               ))}
             </div>
           </div>
         </div>
       )}
 
-      {/* ── VISTA SEMANA (solo desktop lg+) ── */}
       {vista === 'semana' && (
         <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Header días */}
           <div className="flex shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
             <div className="w-10 shrink-0" />
             {semana.map((d) => {
               const esHoyD = d === todayStr()
               return (
-                <button
-                  key={d}
-                  onClick={() => { setFechaActual(d); setVista('dia') }}
-                  className="flex-1 flex flex-col items-center py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-w-0"
-                >
+                <button key={d} onClick={() => { setFechaActual(d); setVista('dia') }} className="flex-1 flex flex-col items-center py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-w-0">
                   <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase">{getDayLabel(d)}</span>
                   <span className={`text-sm font-bold mt-0.5 w-7 h-7 flex items-center justify-center rounded-full ${esHoyD ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-800 dark:text-gray-200'}`}>
                     {parseInt(d.split('-')[2])}
@@ -480,7 +395,6 @@ export default function Calendario() {
               )
             })}
           </div>
-          {/* Grid */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
             <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
@@ -493,16 +407,7 @@ export default function Calendario() {
                 ))}
               </div>
               {semana.map((d, colIdx) => (
-                <CalendarColumn
-                  key={d}
-                  citas={getCitasPorFecha(d)}
-                  onClick={setCitaSeleccionada}
-                  onAddNew={() => { setFechaActual(d); navigate('/quickbook') }}
-                  esHoy={d === todayStr()}
-                  nowPx={nowPx}
-                  showNowDot={colIdx === 0}
-                  compactCitas={true}
-                />
+                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => { setFechaActual(d); navigate('/quickbook') }} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} compactCitas={true} />
               ))}
             </div>
           </div>
@@ -512,17 +417,19 @@ export default function Calendario() {
       <Modal isOpen={!!citaSeleccionada} onClose={() => setCitaSeleccionada(null)} title={citaSeleccionada?.nombreCliente || ''}>
         {citaSeleccionada && <CitaDetalle cita={citaSeleccionada} onCambiarEstado={handleCambiarEstado} />}
       </Modal>
-      <SMSModal isOpen={!!smsModal} onClose={() => setSmsModal(null)} to={smsModal?.to} mensaje={smsModal?.mensaje} titulo={smsModal?.titulo} />
     </div>
   )
 }
 
 function CitaDetalle({ cita, onCambiarEstado }) {
+  const reagendarCita = useCitasStore(s => s.reagendarCita)
   const cfg = ESTADO_CONFIG[cita.estado]
   const transiciones = TRANSICIONES[cita.estado] || []
   const [confirmandoCancelar, setConfirmandoCancelar] = useState(false)
+  const [reagendando, setReagendando] = useState(false)
+  const [nuevaFecha, setNuevaFecha] = useState(cita.fecha)
+  const [nuevaHora, setNuevaHora] = useState(cita.hora)
 
-  // No-show solo disponible si la cita ya pasó (con 30 min de gracia)
   const citaDateTime = new Date(`${cita.fecha}T${cita.hora}:00`)
   const ahora = new Date()
   const noShowDisponible = ahora >= new Date(citaDateTime.getTime() + 30 * 60 * 1000)
@@ -539,14 +446,50 @@ function CitaDetalle({ cita, onCambiarEstado }) {
     NoShow: 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200',
   }
 
+  const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all"
+
   const handleAccion = (est) => {
-    if (est === 'Cancelada') {
-      setConfirmandoCancelar(true)
-    } else {
-      onCambiarEstado(cita, est)
-    }
+    if (est === 'Cancelada') setConfirmandoCancelar(true)
+    else onCambiarEstado(cita, est)
   }
 
+  const handleGuardarReagenda = () => {
+    reagendarCita(cita.id, nuevaFecha, nuevaHora)
+    setReagendando(false)
+  }
+
+  // ── Vista reagendar ──
+  if (reagendando) {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Nueva fecha y hora para la cita de <span className="font-semibold text-gray-900 dark:text-white">{cita.nombreCliente}</span>
+        </p>
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Fecha *</label>
+          <input type="date" value={nuevaFecha} onChange={e => setNuevaFecha(e.target.value)} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Hora *</label>
+          <input type="time" value={nuevaHora} onChange={e => setNuevaHora(e.target.value)} className={inputClass} />
+        </div>
+        <button
+          onClick={handleGuardarReagenda}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-900 dark:bg-white dark:text-gray-900 text-white hover:bg-gray-800"
+        >
+          Guardar cambio
+        </button>
+        <button
+          onClick={() => setReagendando(false)}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          Cancelar
+        </button>
+      </div>
+    )
+  }
+
+  // ── Vista confirmar cancelación ──
   if (confirmandoCancelar) {
     return (
       <div className="space-y-4">
@@ -554,22 +497,17 @@ function CitaDetalle({ cita, onCambiarEstado }) {
           <p className="text-red-700 dark:text-red-400 font-semibold text-sm mb-1">¿Cancelar esta cita?</p>
           <p className="text-red-500 dark:text-red-500 text-xs">Se enviará un SMS de cancelación a {cita.nombreCliente.split(' ')[0]}.</p>
         </div>
-        <button
-          onClick={() => onCambiarEstado(cita, 'Cancelada')}
-          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-red-600 text-white hover:bg-red-700"
-        >
+        <button onClick={() => onCambiarEstado(cita, 'Cancelada')} className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-red-600 text-white hover:bg-red-700">
           Sí, cancelar cita
         </button>
-        <button
-          onClick={() => setConfirmandoCancelar(false)}
-          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
+        <button onClick={() => setConfirmandoCancelar(false)} className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
           Volver
         </button>
       </div>
     )
   }
 
+  // ── Vista principal ──
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2.5 border border-gray-100 dark:border-gray-700">
@@ -579,6 +517,17 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         {cita.nota && <Row label="Nota" value={cita.nota} />}
         <Row label="Origen" value={cita.origen} />
       </div>
+
+      {/* Botón Reagendar — solo citas futuras */}
+      {!noShowDisponible && (
+        <button
+          onClick={() => setReagendando(true)}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          Reagendar
+        </button>
+      )}
+
       {transicionesFiltradas.length > 0 && (
         <div>
           <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide mb-2">Cambiar estado</p>

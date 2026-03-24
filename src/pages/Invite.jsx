@@ -5,7 +5,6 @@ import { useDirectorioStore } from '../store/directorio'
 import { useInviteStore } from '../store/invite'
 import { daysSince } from '../utils/helpers'
 import { sms, proximoDiaTransquilo } from '../utils/sms-templates'
-import SMSModal from '../components/shared/SMSModal'
 
 const PLANTILLAS = [
   { id: 'v1', label: '"Hace tiempo"', fn: sms.inviteV1 },
@@ -87,7 +86,6 @@ export default function Invite() {
   const [paso, setPaso] = useState(1)
   const [plantillaId, setPlantillaId] = useState('v1')
   const [enviado, setEnviado] = useState(false)
-  const [smsPreview, setSmsPreview] = useState(null)
 
   const sugeridos = contactos.filter(c => daysSince(c.ultimaVisita) >= 30)
   const recientes = contactos.filter(c => daysSince(c.ultimaVisita) < 30)
@@ -97,8 +95,6 @@ export default function Invite() {
   const handleEnviar = () => {
     if (seleccionados.length === 0) return
     enviarCampana({ audiencia: seleccionados.map(c => c.id), mensaje: plantilla.fn('[Nombre]'), plantillaId, enviados: seleccionados.length })
-    const ultimo = seleccionados[seleccionados.length - 1]
-    setSmsPreview({ to: ultimo.celular, mensaje: plantilla.fn(ultimo.nombre), titulo: `Campaña enviada a ${seleccionados.length} contacto${seleccionados.length > 1 ? 's' : ''}` })
     setEnviado(true)
   }
 
@@ -107,34 +103,30 @@ export default function Invite() {
   // ── Enviado ──
   if (enviado) {
     return (
-      <>
-        <div className="flex flex-col bg-gray-50 dark:bg-gray-950 min-h-full">
-          <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
-          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
-            <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mb-4">
-              <Check size={32} className="text-white dark:text-gray-900" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Campaña enviada!</h2>
-            <p className="text-gray-500 text-sm mb-1">
-              {seleccionados.length} mensaje{seleccionados.length > 1 ? 's' : ''} despachado{seleccionados.length > 1 ? 's' : ''}
-            </p>
-            <p className="text-gray-400 text-xs mb-8">Las reservas generadas aparecerán etiquetadas en el calendario</p>
-            <button onClick={handleReset} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
-              Nueva campaña
-            </button>
+      <div className="flex flex-col bg-gray-50 dark:bg-gray-950 min-h-full">
+        <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
+          <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mb-4">
+            <Check size={32} className="text-white dark:text-gray-900" />
           </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Campaña enviada!</h2>
+          <p className="text-gray-500 text-sm mb-1">
+            {seleccionados.length} mensaje{seleccionados.length > 1 ? 's' : ''} despachado{seleccionados.length > 1 ? 's' : ''}
+          </p>
+          <p className="text-gray-400 text-xs mb-8">Las reservas generadas aparecerán etiquetadas en el calendario</p>
+          <button onClick={handleReset} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
+            Nueva campaña
+          </button>
         </div>
-        <SMSModal isOpen={!!smsPreview} onClose={() => setSmsPreview(null)} to={smsPreview?.to} mensaje={smsPreview?.mensaje} titulo={smsPreview?.titulo} />
-      </>
+      </div>
     )
   }
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
       <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
 
-      {/* Step indicator + CTA — siempre visible */}
+      {/* Step indicator + CTA */}
       <div className="px-5 pt-4 pb-3 bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shrink-0">
         <StepIndicator paso={paso} />
         <div className="flex gap-2">
@@ -157,9 +149,8 @@ export default function Invite() {
         </div>
       </div>
 
-      {/* Contenido — solo esta área hace scroll */}
+      {/* Contenido scrollable */}
       <div className="flex-1 overflow-y-auto px-5 py-5 pb-20 md:pb-5">
-
         {paso === 1 && (
           <div className="space-y-5">
             <div>

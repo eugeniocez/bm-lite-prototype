@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X } from 'lucide-react'
+import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
 import { daysSince, formatDate } from '../utils/helpers'
@@ -10,8 +10,10 @@ import PageHeader from '../components/shared/PageHeader'
 export default function Clientes() {
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
+  const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
   const [busqueda, setBusqueda] = useState('')
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null)
+  const [agregandoCliente, setAgregandoCliente] = useState(false)
   const navigate = useNavigate()
 
   const filtrados = contactos
@@ -23,12 +25,22 @@ export default function Clientes() {
     setContactoSeleccionado(prev => ({ ...prev, enInviteList: !prev.enInviteList }))
   }
 
+  const AgregarBtn = (
+    <button
+      onClick={() => setAgregandoCliente(true)}
+      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+    >
+      <Plus size={15} />
+      Agregar
+    </button>
+  )
+
   return (
     <div className="flex flex-1 overflow-hidden bg-white dark:bg-gray-900">
 
       {/* Lista — siempre visible */}
       <div className={`flex flex-col overflow-hidden ${contactoSeleccionado ? 'hidden md:flex md:w-80 lg:w-96 border-r border-gray-100 dark:border-gray-800' : 'flex-1'}`}>
-        <PageHeader title="Clientes" subtitle={`${contactos.length} contactos`} icon={Users} />
+        <PageHeader title="Clientes" subtitle={`${contactos.length} contactos`} icon={Users} action={AgregarBtn} />
         <div className="px-5 pt-4 pb-2 bg-white dark:bg-gray-900">
           <div className="relative">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -98,12 +110,95 @@ export default function Clientes() {
           </div>
         </>
       ) : (
-        /* Estado vacío en desktop cuando no hay contacto seleccionado */
         <div className="hidden md:flex flex-1 flex-col items-center justify-center text-center px-8">
           <Users size={48} className="text-gray-200 dark:text-gray-700 mb-4" />
           <p className="text-gray-400 font-medium text-sm">Selecciona un cliente para ver su perfil</p>
         </div>
       )}
+
+      {/* Agregar cliente — móvil: fixed overlay, desktop: se muestra igual */}
+      {agregandoCliente && (
+        <div className="fixed inset-0 max-w-md mx-auto md:max-w-none md:inset-auto md:absolute md:right-0 md:top-0 md:bottom-0 md:w-96 bg-white dark:bg-gray-900 z-50 flex flex-col border-l border-gray-100 dark:border-gray-800">
+          <NuevoClientePantalla
+            onClose={() => setAgregandoCliente(false)}
+            onGuardar={(nombre, celular) => {
+              agregarOActualizar({ nombre, celular })
+              setAgregandoCliente(false)
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function NuevoClientePantalla({ onClose, onGuardar }) {
+  const [nombre, setNombre] = useState('')
+  const [celular, setCelular] = useState('')
+
+  const handleCelular = (val) => setCelular(val.replace(/\D/g, '').slice(0, 10))
+
+  const handleGuardar = () => {
+    if (!nombre.trim() || celular.length !== 10) return
+    onGuardar(nombre.trim(), celular)
+  }
+
+  const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-base focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all"
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 px-5 pt-12 md:pt-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+        <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors md:hidden">
+          <ArrowLeft size={22} />
+        </button>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex-1">Nuevo Cliente</h1>
+        <button onClick={onClose} className="hidden md:block p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <X size={20} />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Nombre *</label>
+          <input
+            type="text"
+            value={nombre}
+            onChange={e => setNombre(e.target.value)}
+            placeholder="Nombre del cliente"
+            className={inputClass}
+            autoComplete="off"
+            autoFocus
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={celular}
+            onChange={e => handleCelular(e.target.value)}
+            placeholder="10 dígitos"
+            className={inputClass}
+            autoComplete="off"
+          />
+        </div>
+      </div>
+
+      <div className="px-5 pb-8 pt-3 space-y-2 border-t border-gray-100 dark:border-gray-800">
+        <button
+          onClick={handleGuardar}
+          disabled={!nombre.trim() || celular.length !== 10}
+          className="w-full bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Guardar
+        </button>
+        <button
+          onClick={onClose}
+          className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Cancelar
+        </button>
+      </div>
     </div>
   )
 }
@@ -115,7 +210,6 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className={`flex items-center gap-3 px-5 border-b border-gray-100 dark:border-gray-800 ${esPanel ? 'pt-6 pb-4' : 'pt-12 pb-4'}`}>
         {!esPanel && (
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
@@ -135,7 +229,6 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
         )}
       </div>
 
-      {/* Contenido */}
       <div className="flex-1 overflow-y-auto px-5 py-5 pb-24 md:pb-5 space-y-5">
         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2.5 border border-gray-100 dark:border-gray-700">
           <Row label="Celular" value={contacto.celular} />
