@@ -515,18 +515,8 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         <Row label="Fecha" value={`${formatDate(cita.fecha)} · ${cita.hora}`} />
         <Row label="Estado" value={<span className={`text-xs font-bold px-2 py-1 rounded-lg ${cfg.badge}`}>{cfg.label}</span>} />
         {cita.nota && <Row label="Nota" value={cita.nota} />}
-        <Row label="Origen" value={cita.origen} />
+        <Row label="Origen" value={cita.origen === 'QuickBook' ? 'Nueva Cita' : cita.origen} />
       </div>
-
-      {/* Botón Reagendar — solo citas futuras */}
-      {!noShowDisponible && (
-        <button
-          onClick={() => setReagendando(true)}
-          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          Reagendar
-        </button>
-      )}
 
       {transicionesFiltradas.length > 0 && (
         <div>
@@ -540,6 +530,17 @@ function CitaDetalle({ cita, onCambiarEstado }) {
           </div>
         </div>
       )}
+
+      {/* Botón Reagendar — solo citas futuras */}
+      {!noShowDisponible && (
+        <button
+          onClick={() => setReagendando(true)}
+          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          Reagendar
+        </button>
+      )}
+
       {transicionesFiltradas.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">Estado terminal — no hay más acciones disponibles</p>}
     </div>
   )
