@@ -216,7 +216,7 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
 
   // Próxima cita — solo fechas estrictamente futuras, estados activos
   const proximaCita = todasLasCitas
-    .filter(c => c.fecha > hoy && !['Cancelada', 'NoShow'].includes(c.estado))
+    .filter(c => c.fecha >= hoy && !['Cancelada', 'NoShow'].includes(c.estado))
     .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0] || null
 
   return (
