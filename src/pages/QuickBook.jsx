@@ -5,6 +5,7 @@ import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
 import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
+import PhoneInput from '../components/shared/PhoneInput'
 
 export default function QuickBook() {
   const agregarCita = useCitasStore(s => s.agregarCita)
@@ -53,7 +54,7 @@ export default function QuickBook() {
     const clean = val.replace(/\D/g, '').slice(0, 10)
     setCelular(clean)
     if (clean.length === 10) {
-      const contacto = buscarPorCelular(clean)
+      const contacto = buscarPorCelular(`52${clean}`)
       if (contacto) { setNombre(contacto.nombre); setShowSugerencias(false) }
     }
   }
@@ -68,9 +69,9 @@ export default function QuickBook() {
     const { nombre, celular, fecha, hora, nota, esWalkIn } = data
     const estado = esWalkIn ? 'WalkIn' : 'Apartada'
     const origen = esWalkIn ? 'WalkIn' : 'QuickBook'
-    agregarCita({ nombreCliente: nombre, celular, fecha, hora, nota: nota || null, estado, origen })
-    agregarOActualizar({ nombre, celular })
-    if (esWalkIn) actualizarUltimaVisita(celular)
+    agregarCita({ nombreCliente: nombre, celular: `52${celular}`, fecha, hora, nota: nota || null, estado, origen })
+    agregarOActualizar({ nombre, celular: `52${celular}` })
+    if (esWalkIn) actualizarUltimaVisita(`52${celular}`)
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setToast(true)
@@ -80,7 +81,9 @@ export default function QuickBook() {
     e.preventDefault()
     if (!celular || !nombre || !fecha || !hora) return
     const citasDelDia = getCitasPorFecha(fecha)
-    const citaConflicto = citasDelDia.find(c => c.hora === hora && c.estado === 'SinConfirmar')
+    const citaConflicto = citasDelDia
+      .filter(c => c.hora === hora && c.estado === 'SinConfirmar')
+      .sort((a, b) => b.creadaEn.localeCompare(a.creadaEn))[0]
     if (citaConflicto) {
       setConflicto(citaConflicto)
       setPendingData({ nombre, celular, fecha, hora, nota, esWalkIn })
@@ -124,9 +127,9 @@ export default function QuickBook() {
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (
-          <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
-            <p className="text-gray-900 dark:text-white text-sm font-semibold">Modo cliente sin cita activo</p>
-            <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">Fecha y hora precargadas con el momento actual</p>
+          <div className="bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl px-4 py-3">
+            <p className="text-green-900 dark:text-green-300 text-sm font-semibold">Modo cliente sin cita activo</p>
+            <p className="text-green-700 dark:text-green-400 text-xs mt-0.5">Fecha y hora precargadas con el momento actual</p>
           </div>
         )}
 
@@ -186,16 +189,7 @@ export default function QuickBook() {
 
           <div>
             <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={celular}
-              onChange={e => handleCelular(e.target.value)}
-              placeholder="10 dígitos"
-              required
-              className={inputClass}
-            />
+            <PhoneInput value={celular} onChange={(val) => handleCelular(val)} />
             {celular.length === 10 && buscarPorCelular(celular) && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 ml-1 font-medium">✓ Cliente encontrado en directorio</p>
             )}

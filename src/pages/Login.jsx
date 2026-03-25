@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
+import PhoneInput from '../components/shared/PhoneInput'
 
 const CODIGO_DEMO = '1234'
 
@@ -10,10 +11,6 @@ export default function Login() {
   const [telefono, setTelefono] = useState('')
   const [codigo, setCodigo] = useState('')
   const [error, setError] = useState('')
-
-  const handleTelefono = (val) => {
-    setTelefono(val.replace(/\D/g, '').slice(0, 10))
-  }
 
   const handleSiguiente = (e) => {
     e.preventDefault()
@@ -56,16 +53,7 @@ export default function Login() {
           <form onSubmit={handleSiguiente} className="space-y-4" autoComplete="off">
             <div>
               <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Teléfono *</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={telefono}
-                onChange={e => handleTelefono(e.target.value)}
-                placeholder="10 dígitos"
-                required
-                className={inputClass}
-                autoComplete="off"
-              />
+              <PhoneInput value={telefono} onChange={setTelefono} />
             </div>
             <button
               type="submit"

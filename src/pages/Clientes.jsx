@@ -6,6 +6,7 @@ import { daysSince, formatDate, todayStr } from '../utils/helpers'
 import { ESTADO_CONFIG } from '../utils/estados'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
+import PhoneInput from '../components/shared/PhoneInput'
 
 export default function Clientes() {
   const contactos = useDirectorioStore(s => s.contactos)
@@ -122,7 +123,7 @@ export default function Clientes() {
           <NuevoClientePantalla
             onClose={() => setAgregandoCliente(false)}
             onGuardar={(nombre, celular) => {
-              agregarOActualizar({ nombre, celular })
+              agregarOActualizar({ nombre, celular: `52${celular}` })
               setAgregandoCliente(false)
             }}
           />
@@ -135,8 +136,6 @@ export default function Clientes() {
 function NuevoClientePantalla({ onClose, onGuardar }) {
   const [nombre, setNombre] = useState('')
   const [celular, setCelular] = useState('')
-
-  const handleCelular = (val) => setCelular(val.replace(/\D/g, '').slice(0, 10))
 
   const handleGuardar = () => {
     if (!nombre.trim() || celular.length !== 10) return
@@ -172,15 +171,7 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
         </div>
         <div>
           <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={celular}
-            onChange={e => handleCelular(e.target.value)}
-            placeholder="10 dígitos"
-            className={inputClass}
-            autoComplete="off"
-          />
+          <PhoneInput value={celular} onChange={setCelular} />
         </div>
       </div>
 
