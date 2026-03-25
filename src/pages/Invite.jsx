@@ -112,10 +112,9 @@ export default function Invite() {
             <Check size={32} className="text-white" />
           </div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Mensaje enviado!</h2>
-          <p className="text-gray-500 text-sm mb-1">
+          <p className="text-gray-500 text-sm mb-8">
             {seleccionados.length} cliente{seleccionados.length > 1 ? 's' : ''} {seleccionados.length > 1 ? 'recibieron' : 'recibió'} tu mensaje exitosamente
           </p>
-          <p className="text-gray-400 text-xs mb-8">Las reservas generadas aparecerán etiquetadas en el calendario</p>
           <button onClick={() => navigate('/calendario')} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
             Regresar a calendario
           </button>
