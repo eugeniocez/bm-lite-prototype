@@ -10,9 +10,8 @@ import Modal from '../components/shared/Modal'
 import { useCalendarioStore } from '../store/calendario'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-const HOUR_START = 7
-const HOUR_END = 21
-const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
+const DEFAULT_HOUR_START = 6
+const DEFAULT_HOUR_END = 20
 const CELL_HEIGHT = 64
 
 function timeToMinutes(t) {
@@ -258,6 +257,23 @@ export default function Calendario() {
   const tresDias = Array.from({ length: 3 }, (_, i) => addDays(fechaActual, i))
   const lunesSemana = getLunesDeSemana(fechaActual)
   const semana = Array.from({ length: 7 }, (_, i) => addDays(lunesSemana, i))
+
+  // Rango de horas dinámico según citas visibles
+  const citasVisibles = vista === 'dia'
+    ? getCitasPorFecha(fechaActual)
+    : vista === '3dias'
+    ? tresDias.flatMap(d => getCitasPorFecha(d))
+    : semana.flatMap(d => getCitasPorFecha(d))
+
+  const HOUR_START = citasVisibles.length > 0
+    ? Math.min(DEFAULT_HOUR_START, ...citasVisibles.map(c => parseInt(c.hora.split(':')[0])))
+    : DEFAULT_HOUR_START
+
+  const HOUR_END = citasVisibles.length > 0
+    ? Math.max(DEFAULT_HOUR_END, ...citasVisibles.map(c => parseInt(c.hora.split(':')[0]) + 1))
+    : DEFAULT_HOUR_END
+
+  const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
 
   useEffect(() => {
     const interval = setInterval(() => setNowPx(getCurrentTimePx()), 60000)
