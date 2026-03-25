@@ -409,7 +409,7 @@ export default function Calendario() {
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
                     <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
+                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
                     </span>
                   </div>
                 ))}
@@ -444,7 +444,7 @@ export default function Calendario() {
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
                     <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
+                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
                     </span>
                   </div>
                 ))}
@@ -558,7 +558,7 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         <Row label="Fecha" value={`${formatDate(cita.fecha)} · ${cita.hora}`} />
         <Row label="Estado" value={<span className={`text-xs font-bold px-2 py-1 rounded-lg ${cfg.badge}`}>{cfg.label}</span>} />
         {cita.nota && <Row label="Nota" value={cita.nota} />}
-        <Row label="Origen" value={cita.origen === 'QuickBook' ? 'Nueva Cita' : cita.origen} />
+        <Row label="Origen" value={cita.origen === 'QuickBook' ? 'Nueva Cita' : cita.origen === 'WalkIn' ? 'Cliente sin Cita' : cita.origen} />
       </div>
 
       {transicionesFiltradas.length > 0 && (
