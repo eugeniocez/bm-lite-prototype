@@ -49,7 +49,7 @@ export default function QuickBook() {
 
   const handleSeleccionarContacto = (contacto) => {
     setNombre(contacto.nombre)
-    setCelular(contacto.celular)
+    setCelular(contacto.celular.slice(-10))
     setSugerencias([])
     setShowSugerencias(false)
   }
@@ -160,7 +160,7 @@ export default function QuickBook() {
           <div>
             <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
             <PhoneInput value={celular} onChange={(val) => handleCelular(val)} />
-            {celular.length === 10 && buscarPorCelular(celular) && (
+            {celular.length === 10 && buscarPorCelular(`52${celular}`) && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 ml-1 font-medium">✓ Cliente encontrado en directorio</p>
             )}
           </div>
