@@ -7,6 +7,7 @@ import { todayStr, addDays, formatDateLong, formatDate } from '../utils/helpers'
 import { ESTADO_CONFIG, TRANSICIONES, ACCION_LABELS } from '../utils/estados'
 import { calcularLayout } from '../utils/overlap'
 import Modal from '../components/shared/Modal'
+import { useCalendarioStore } from '../store/calendario'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 const HOUR_START = 7
@@ -241,8 +242,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
 
 export default function Calendario() {
   const navigate = useNavigate()
-  const [vista, setVista] = useState('dia')
-  const [fechaActual, setFechaActual] = useState(todayStr())
+  const { fechaActual, vista, setFechaActual, setVista } = useCalendarioStore()
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
   const [usuariosOpen, setUsuariosOpen] = useState(false)
   const [nowPx, setNowPx] = useState(getCurrentTimePx())
