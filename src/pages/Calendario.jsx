@@ -409,7 +409,7 @@ export default function Calendario() {
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
                     <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
+                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                     </span>
                   </div>
                 ))}
@@ -444,7 +444,7 @@ export default function Calendario() {
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
                     <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
+                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                     </span>
                   </div>
                 ))}
