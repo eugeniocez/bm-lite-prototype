@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Send, Users, MessageSquare, Check, ArrowLeft, ArrowRight } from 'lucide-react'
 import PageHeader from '../components/shared/PageHeader'
 import { useDirectorioStore } from '../store/directorio'
@@ -79,6 +80,7 @@ function ContactoBtn({ c, onToggle }) {
 }
 
 export default function Invite() {
+  const navigate = useNavigate()
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
   const enviarCampana = useInviteStore(s => s.enviarCampana)
@@ -106,16 +108,16 @@ export default function Invite() {
       <div className="flex flex-col bg-gray-50 dark:bg-gray-950 min-h-full">
         <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
-          <div className="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center mb-4">
-            <Check size={32} className="text-white dark:text-gray-900" />
+          <div className="w-16 h-16 bg-green-700 dark:bg-green-600 rounded-full flex items-center justify-center mb-4">
+            <Check size={32} className="text-white" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Campaña enviada!</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">¡Mensaje enviado!</h2>
           <p className="text-gray-500 text-sm mb-1">
-            {seleccionados.length} mensaje{seleccionados.length > 1 ? 's' : ''} despachado{seleccionados.length > 1 ? 's' : ''}
+            {seleccionados.length} cliente{seleccionados.length > 1 ? 's' : ''} {seleccionados.length > 1 ? 'recibieron' : 'recibió'} tu mensaje exitosamente
           </p>
           <p className="text-gray-400 text-xs mb-8">Las reservas generadas aparecerán etiquetadas en el calendario</p>
-          <button onClick={handleReset} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
-            Nueva campaña
+          <button onClick={() => navigate('/calendario')} className="bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold px-8 py-3 rounded-xl text-sm hover:bg-gray-800 transition-colors">
+            Regresar a calendario
           </button>
         </div>
       </div>
