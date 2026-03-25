@@ -368,14 +368,15 @@ export default function Calendario() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
             <div className="w-14 shrink-0 select-none">
-              {hours.map(hour => (
+              {HOURS.map(hour => (
                 <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-3 pt-1">
                   <span className="text-xs text-gray-400 dark:text-gray-600 font-medium tabular-nums">
                     {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                   </span>
                 </div>
               ))}
-            </div><CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} hourStart={HOUR_START} hourEnd={HOUR_END} hours={HOURS} /><CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} />
+            </div>
+            <CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} hourStart={HOUR_START} hourEnd={HOUR_END} hours={HOURS} />
           </div>
         </div>
       )}
