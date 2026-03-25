@@ -1,11 +1,3 @@
-export const ESTADOS = {
-  APARTADA: 'Apartada',
-  SIN_CONFIRMAR: 'SinConfirmar',
-  CONFIRMADA: 'Confirmada',
-  CANCELADA: 'Cancelada',
-  NO_SHOW: 'NoShow',
-  WALK_IN: 'WalkIn',
-}
 
 export const ESTADO_CONFIG = {
   Apartada: {

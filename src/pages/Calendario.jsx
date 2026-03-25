@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ChevronRight as ChevronR, ArrowLeft } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -74,7 +74,7 @@ function UsuariosPantalla({ onClose }) {
             <button key={u.id} onClick={() => handleEditar(u)} className="w-full flex items-center gap-3 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-800 text-left transition-colors">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0"><Users size={18} className="text-blue-500" /></div>
               <div className="flex-1"><p className="text-gray-900 dark:text-white font-semibold text-sm">{u.nombre}</p><p className="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-wide font-medium mt-0.5">{u.rol}</p></div>
-              <ChevronR size={16} className="text-gray-300" />
+              <ChevronRight size={16} className="text-gray-300" />
             </button>
           ))}
           {miembros.length > 0 && (<>
@@ -83,7 +83,7 @@ function UsuariosPantalla({ onClose }) {
               <button key={u.id} onClick={() => handleEditar(u)} className="w-full flex items-center gap-3 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-800 text-left transition-colors">
                 <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0"><Users size={18} className="text-gray-400" /></div>
                 <div className="flex-1"><p className="text-gray-900 dark:text-white font-semibold text-sm">{u.nombre}</p><p className="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-wide font-medium mt-0.5">{u.rol}</p></div>
-                <ChevronR size={16} className="text-gray-300" />
+                <ChevronRight size={16} className="text-gray-300" />
               </button>
             ))}
           </>)}

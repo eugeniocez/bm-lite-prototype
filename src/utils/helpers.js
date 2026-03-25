@@ -39,10 +39,3 @@ export function addDays(dateStr, n) {
   return d.toISOString().split('T')[0]
 }
 
-export function getWeekStart(dateStr) {
-  const d = new Date(`${dateStr}T12:00:00`)
-  const day = d.getDay()
-  const diff = day === 0 ? -6 : 1 - day
-  d.setDate(d.getDate() + diff)
-  return d.toISOString().split('T')[0]
-}
