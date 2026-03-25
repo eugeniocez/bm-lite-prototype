@@ -59,7 +59,7 @@ export const TRANSICIONES = {
   Confirmada: ['Cancelada', 'NoShow'],
   Cancelada: [],
   NoShow: [],
-  WalkIn: ['NoShow'],
+  WalkIn: [],
 }
 
 export const ACCION_LABELS = {
