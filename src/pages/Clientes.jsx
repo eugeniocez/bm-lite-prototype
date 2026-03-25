@@ -158,6 +158,10 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
 
       <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
         <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
+          <PhoneInput value={celular} onChange={setCelular} />
+        </div>
+        <div>
           <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Nombre *</label>
           <input
             type="text"
@@ -168,10 +172,6 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
             autoComplete="off"
             autoFocus
           />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Celular *</label>
-          <PhoneInput value={celular} onChange={setCelular} />
         </div>
       </div>
 
