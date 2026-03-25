@@ -7,9 +7,9 @@ import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
 import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
+import { useCalendarioStore } from '../store/calendario'
 
 export default function QuickBook() {
-  const navigate = useNavigate()
   const agregarCita = useCitasStore(s => s.agregarCita)
   const getCitasPorFecha = useCitasStore(s => s.getCitasPorFecha)
   const cambiarEstado = useCitasStore(s => s.cambiarEstado)
@@ -17,6 +17,7 @@ export default function QuickBook() {
   const buscarPorCelular = useDirectorioStore(s => s.buscarPorCelular)
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
   const actualizarUltimaVisita = useDirectorioStore(s => s.actualizarUltimaVisita)
+  const setFechaCalendario = useCalendarioStore(s => s.setFechaActual)
 
   const [celular, setCelular] = useState('')
   const [nombre, setNombre] = useState('')
@@ -29,6 +30,7 @@ export default function QuickBook() {
   const [showSugerencias, setShowSugerencias] = useState(false)
   const [conflicto, setConflicto] = useState(null)
   const [pendingData, setPendingData] = useState(null)
+  const navigate = useNavigate()
   const nombreRef = useRef(null)
 
   const handleNombre = (val) => {
@@ -77,6 +79,7 @@ export default function QuickBook() {
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setToast(true)
+    setFechaCalendario(fecha)
     setTimeout(() => navigate('/calendario'), 500)
   }
 
