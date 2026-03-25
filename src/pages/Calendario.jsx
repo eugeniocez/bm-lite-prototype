@@ -541,7 +541,7 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         </button>
       )}
 
-      {transicionesFiltradas.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">Estado terminal — no hay más acciones disponibles</p>}
+      {transicionesFiltradas.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No hay mas acciones disponibles para esta cita</p>}
     </div>
   )
 }
