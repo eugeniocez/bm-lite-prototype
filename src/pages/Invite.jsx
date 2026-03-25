@@ -143,7 +143,7 @@ export default function Invite() {
           ) : (
             <button onClick={handleEnviar} disabled={seleccionados.length === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-              <Send size={16} />Enviar campaña
+              <Send size={16} />Invitar Clientes
             </button>
           )}
         </div>
