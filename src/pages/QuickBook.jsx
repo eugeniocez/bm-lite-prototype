@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -8,6 +9,7 @@ import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
 
 export default function QuickBook() {
+  const navigate = useNavigate()
   const agregarCita = useCitasStore(s => s.agregarCita)
   const getCitasPorFecha = useCitasStore(s => s.getCitasPorFecha)
   const cambiarEstado = useCitasStore(s => s.cambiarEstado)
@@ -75,6 +77,7 @@ export default function QuickBook() {
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setToast(true)
+    setTimeout(() => navigate('/calendario'), 500)
   }
 
   const handleSubmit = (e) => {
