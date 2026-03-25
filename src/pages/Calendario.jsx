@@ -247,6 +247,8 @@ export default function Calendario() {
   const [usuariosOpen, setUsuariosOpen] = useState(false)
   const [nowPx, setNowPx] = useState(getCurrentTimePx())
   const scrollRef = useRef(null)
+  const swipeStartX = useRef(null)
+  const swipeStartY = useRef(null)
 
   const getCitasPorFecha = useCitasStore(s => s.getCitasPorFecha)
   const cambiarEstado = useCitasStore(s => s.cambiarEstado)
@@ -271,6 +273,25 @@ export default function Calendario() {
     if (nuevoEstado === 'NoShow') incrementarNoShows(cita.celular)
     else if (nuevoEstado === 'Confirmada') actualizarUltimaVisita(cita.celular, cita.fecha)
     setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
+  }
+
+  const handleTouchStart = (e) => {
+    swipeStartX.current = e.touches[0].clientX
+    swipeStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e) => {
+    if (swipeStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - swipeStartX.current
+    const dy = e.changedTouches[0].clientY - swipeStartY.current
+    // Solo actúa si el movimiento es más horizontal que vertical y supera 50px
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      const delta = vista === 'dia' ? 1 : 3
+      if (dx < 0) setFechaActual(prev => addDays(prev, delta))   // swipe izquierda → adelante
+      else setFechaActual(prev => addDays(prev, -delta))          // swipe derecha → atrás
+    }
+    swipeStartX.current = null
+    swipeStartY.current = null
   }
 
   const navDelta = vista === 'dia' ? 1 : vista === '3dias' ? 3 : 7
@@ -328,7 +349,7 @@ export default function Calendario() {
       </div>
 
       {vista === 'dia' && (
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
             <div className="w-14 shrink-0 select-none">
               {HOURS.map(hour => (
@@ -360,7 +381,7 @@ export default function Calendario() {
               )
             })}
           </div>
-          <div ref={scrollRef} className="flex-1 overflow-y-auto">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
                 {HOURS.map(hour => (
