@@ -7,7 +7,6 @@ import { todayStr, addDays, formatDateLong, formatDate } from '../utils/helpers'
 import { ESTADO_CONFIG, TRANSICIONES, ACCION_LABELS } from '../utils/estados'
 import { calcularLayout } from '../utils/overlap'
 import Modal from '../components/shared/Modal'
-import { useCalendarioStore } from '../store/calendario'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 const DEFAULT_HOUR_START = 6
@@ -18,12 +17,12 @@ function timeToMinutes(t) {
   const [h, m] = t.split(':').map(Number)
   return h * 60 + m
 }
-function minutesToPx(min) {
-  return ((min - HOUR_START * 60) / 60) * CELL_HEIGHT
+function minutesToPx(min, hourStart = DEFAULT_HOUR_START) {
+  return ((min - hourStart * 60) / 60) * CELL_HEIGHT
 }
-function getCurrentTimePx() {
+function getCurrentTimePx(hourStart = DEFAULT_HOUR_START) {
   const now = new Date()
-  return minutesToPx(now.getHours() * 60 + now.getMinutes())
+  return minutesToPx(now.getHours() * 60 + now.getMinutes(), hourStart)
 }
 function getDayLabel(dateStr) {
   const d = new Date(`${dateStr}T12:00:00`)
@@ -128,12 +127,12 @@ function UsuariosPantalla({ onClose }) {
   )
 }
 
-function CitaBlock({ cita, onClick, compact: forceCompact = false }) {
+function CitaBlock({ cita, onClick, compact: forceCompact = false, hourStart = DEFAULT_HOUR_START, hourEnd = DEFAULT_HOUR_END }) {
   const cfg = ESTADO_CONFIG[cita.estado] || ESTADO_CONFIG.Apartada
   const startMin = timeToMinutes(cita.hora)
-  const top = minutesToPx(startMin)
+  const top = minutesToPx(startMin, hourStart)
   const height = Math.max(CELL_HEIGHT * 0.75, 44)
-  if (startMin < HOUR_START * 60 || startMin >= HOUR_END * 60) return null
+  if (startMin < hourStart * 60 || startMin >= hourEnd * 60) return null
 
   const left = cita._left ?? 0
   const width = cita._width ?? 1
@@ -203,17 +202,17 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
   )
 }
 
-function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true, compactCitas = false }) {
+function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true, compactCitas = false, hourStart = DEFAULT_HOUR_START, hourEnd = DEFAULT_HOUR_END, hours = [] }) {
   const { normal, scrollClusters } = calcularLayout(citas)
   return (
     <div className="flex-1 relative border-l border-gray-200 dark:border-gray-800">
-      {HOURS.map(hour => (
+      {hours.map(hour => (
         <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="border-b border-gray-100 dark:border-gray-800">
           <div className="border-b border-gray-50 dark:border-gray-800/50 h-1/2" />
         </div>
       ))}
       {esHoy && <div className="absolute inset-0 bg-blue-50/30 dark:bg-blue-900/10 pointer-events-none" />}
-      {esHoy && nowPx >= 0 && nowPx <= HOURS.length * CELL_HEIGHT && (
+      {esHoy && nowPx >= 0 && nowPx <= hours.length * CELL_HEIGHT && (
         <>
           <div style={{ top: `${nowPx}px` }} className="absolute left-0 right-0 flex items-center pointer-events-none z-20">
             {showNowDot && <div className="w-2.5 h-2.5 rounded-full bg-red-500 -ml-1.5 shrink-0" />}
@@ -226,7 +225,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
         </>
       )}
       <div className="absolute inset-0">
-        {normal.map(cita => <CitaBlock key={cita.id} cita={cita} onClick={onClick} compact={compactCitas} />)}
+        {normal.map(cita => <CitaBlock key={cita.id} cita={cita} onClick={onClick} compact={compactCitas} hourStart={hourStart} hourEnd={hourEnd} />)}
       </div>
       {scrollClusters.map((cluster, i) => {
         const isDesktop = window.innerWidth >= 768
@@ -241,10 +240,11 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
 
 export default function Calendario() {
   const navigate = useNavigate()
-  const { fechaActual, vista, setFechaActual, setVista } = useCalendarioStore()
+  const [vista, setVista] = useState('dia')
+  const [fechaActual, setFechaActual] = useState(todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
   const [usuariosOpen, setUsuariosOpen] = useState(false)
-  const [nowPx, setNowPx] = useState(getCurrentTimePx())
+  const [nowPx, setNowPx] = useState(getCurrentTimePx(DEFAULT_HOUR_START))
   const scrollRef = useRef(null)
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
@@ -276,7 +276,7 @@ export default function Calendario() {
   const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
 
   useEffect(() => {
-    const interval = setInterval(() => setNowPx(getCurrentTimePx()), 60000)
+    const interval = setInterval(() => setNowPx(getCurrentTimePx(HOUR_START)), 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -368,15 +368,14 @@ export default function Calendario() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
             <div className="w-14 shrink-0 select-none">
-              {HOURS.map(hour => (
+              {hours.map(hour => (
                 <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-3 pt-1">
                   <span className="text-xs text-gray-400 dark:text-gray-600 font-medium tabular-nums">
                     {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                   </span>
                 </div>
               ))}
-            </div>
-            <CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} />
+            </div><CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} hourStart={HOUR_START} hourEnd={HOUR_END} hours={HOURS} /><CalendarColumn citas={getCitasPorFecha(fechaActual)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={fechaActual === todayStr()} nowPx={nowPx} showNowDot={true} />
           </div>
         </div>
       )}
@@ -409,7 +408,7 @@ export default function Calendario() {
                 ))}
               </div>
               {tresDias.map((d, colIdx) => (
-                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} />
+                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => navigate('/quickbook')} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} hourStart={HOUR_START} hourEnd={HOUR_END} hours={HOURS} />
               ))}
             </div>
           </div>
@@ -444,7 +443,7 @@ export default function Calendario() {
                 ))}
               </div>
               {semana.map((d, colIdx) => (
-                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => { setFechaActual(d); navigate('/quickbook') }} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} compactCitas={true} />
+                <CalendarColumn key={d} citas={getCitasPorFecha(d)} onClick={setCitaSeleccionada} onAddNew={() => { setFechaActual(d); navigate('/quickbook') }} esHoy={d === todayStr()} nowPx={nowPx} showNowDot={colIdx === 0} compactCitas={true} hourStart={HOUR_START} hourEnd={HOUR_END} hours={HOURS} />
               ))}
             </div>
           </div>
