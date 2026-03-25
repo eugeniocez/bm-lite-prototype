@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ChevronRight as ChevronR, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
@@ -9,7 +10,7 @@ import { calcularLayout } from '../utils/overlap'
 import Modal from '../components/shared/Modal'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-const DEFAULT_HOUR_START = 6
+const DEFAULT_HOUR_START = 7
 const DEFAULT_HOUR_END = 20
 const CELL_HEIGHT = 64
 
@@ -240,8 +241,9 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
 
 export default function Calendario() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [vista, setVista] = useState('dia')
-  const [fechaActual, setFechaActual] = useState(todayStr())
+  const [fechaActual, setFechaActual] = useState(searchParams.get('fecha') || todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
   const [usuariosOpen, setUsuariosOpen] = useState(false)
   const [nowPx, setNowPx] = useState(getCurrentTimePx(DEFAULT_HOUR_START))
@@ -273,7 +275,7 @@ export default function Calendario() {
     ? Math.max(DEFAULT_HOUR_END, ...citasVisibles.map(c => parseInt(c.hora.split(':')[0]) + 1))
     : DEFAULT_HOUR_END
 
-  const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
+  const HOURS = Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => HOUR_START + i)
 
   useEffect(() => {
     const interval = setInterval(() => setNowPx(getCurrentTimePx(HOUR_START)), 60000)
@@ -288,7 +290,11 @@ export default function Calendario() {
     cambiarEstado(cita.id, nuevoEstado)
     if (nuevoEstado === 'NoShow') incrementarNoShows(cita.celular)
     else if (nuevoEstado === 'Confirmada') actualizarUltimaVisita(cita.celular, cita.fecha)
-    setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
+    if (['Cancelada', 'NoShow'].includes(nuevoEstado)) {
+      setCitaSeleccionada(null)
+    } else {
+      setCitaSeleccionada(prev => prev ? { ...prev, estado: nuevoEstado } : null)
+    }
   }
 
   const handleTouchStart = (e) => {
@@ -366,7 +372,7 @@ export default function Calendario() {
 
       {vista === 'dia' && (
         <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+          <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT + CELL_HEIGHT}px` }}>
             <div className="w-14 shrink-0 select-none">
               {HOURS.map(hour => (
                 <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-3 pt-1">
@@ -398,7 +404,7 @@ export default function Calendario() {
             })}
           </div>
           <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT + CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
@@ -433,7 +439,7 @@ export default function Calendario() {
             })}
           </div>
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT}px` }}>
+            <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT + CELL_HEIGHT}px` }}>
               <div className="w-10 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
