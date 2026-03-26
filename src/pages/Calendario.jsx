@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -204,7 +204,7 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
 }
 
 function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = true, compactCitas = false, hourStart = DEFAULT_HOUR_START, hourEnd = DEFAULT_HOUR_END, hours = [] }) {
-  const { normal, scrollClusters } = calcularLayout(citas)
+  const { normal, scrollClusters } = useMemo(() => calcularLayout(citas), [citas])
   return (
     <div className="flex-1 relative border-l border-gray-200 dark:border-gray-800">
       {hours.map(hour => (
