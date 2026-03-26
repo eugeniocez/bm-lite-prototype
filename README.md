@@ -6,7 +6,7 @@ Interfaz simplificada de BarberMonster. Prototipo visual/funcional sin backend r
 
 - React 18 + Vite
 - Tailwind CSS 3
-- Zustand (estado + persistencia en localStorage)
+- Zustand (estado en memoria — sin persistencia)
 - React Router v6
 - Lucide React (íconos)
 - date-fns
@@ -49,7 +49,7 @@ src/
     Registro.jsx        # Flujo de registro con verificación SMS (2 pasos)
     Login.jsx           # Flujo de login con verificación SMS (2 pasos)
     Bienvenida.jsx      # Pantalla post-registro, solo primera vez
-    QuickBook.jsx       # Captura de citas + autocomplete + alerta de conflicto de horario
+    QuickBook.jsx       # Captura de citas + autocomplete por nombre y celular + alerta de conflicto de horario
     Calendario.jsx      # Vista día/3días/semana con estados, overlap y filtros de acción por tiempo
     Clientes.jsx        # Lista de clientes + panel lateral en desktop + agregar cliente manual
     Invite.jsx          # Flujo 3 pasos para campañas SMS
@@ -61,7 +61,7 @@ src/
     PageHeader.jsx      # Header unificado de pantallas
   store/
     citas.js            # Estado de citas + seed data + reagendarCita()
-    directorio.js       # Estado de contactos + seed data (25 contactos)
+    directorio.js       # Estado de contactos + seed data (15 contactos)
     invite.js           # Estado de campañas INVITE
     negocio.js          # Nombre de barbería (persiste desde registro)
   utils/
@@ -103,7 +103,7 @@ src/
 | Confirmada | Verde oscuro `#166534` (texto blanco) | Cliente confirmó asistencia |
 | Cancelada | Rojo translúcido `#FEF2F2`, borde punteado `#F87171` | Cita cancelada |
 | NoShow | Gris oscuro `#111827` con texto rojo `#F87171` | Cliente no se presentó |
-| WalkIn | Verde claro `#DCFCE7` (texto `#14532D`) | Cliente sin cita registrado en el momento |
+| WalkIn | Verde claro `#DCFCE7` (texto `#14532D`) | Cliente sin Cita registrado en el momento |
 
 ## Lógica de acciones por tiempo
 
@@ -318,26 +318,19 @@ Automático — sigue la preferencia del sistema operativo (`prefers-color-schem
 ## Datos de prueba
 
 El prototipo incluye seed data con:
-- 25 contactos ficticios
-- ~40 citas distribuidas en 7 días (hoy, ayer, mañana, etc.)
+- 15 contactos ficticios
+- ~16 citas distribuidas en 4 días (hoy, ayer, mañana, pasado mañana)
 - Todos los estados de cita representados
 - 6 citas simultáneas a las 3pm para demostrar scroll horizontal en móvil
 
-Para resetear los datos al seed original:
-
-```javascript
-// En la consola del navegador:
-localStorage.clear()
-// Luego recargar la página
-```
+Para resetear los datos al seed original basta con recargar la página — el estado no persiste.
 
 ## Notas para desarrollo
 
 - Los SMS no se envían realmente — la arquitectura está lista para conectar el backend
 - El código SMS de verificación en demo siempre es `1234`
 - La autenticación es visual — sin backend real ni tokens
-- El nombre de barbería se guarda en `bm-negocio` (localStorage) al completar registro
+- El nombre de barbería se guarda en memoria (store `negocio.js`) al completar el registro demo
 - La gestión de usuarios está comentada en `Calendario.jsx` — lista para activar
-- `localStorage` como persistencia — reemplazar con API en producción
 - El evento de conversión en `Bienvenida.jsx` es un `console.log` — reemplazar con SDK de analytics en producción
 - `SinConfirmar` en producción lo asigna el sistema automáticamente — no debería ser acción manual del barbero
