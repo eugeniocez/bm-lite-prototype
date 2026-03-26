@@ -93,7 +93,7 @@ export default function QuickBook() {
     setSugerencias([]); setShowSugerencias(false)
     setSugerenciasCelular([]); setShowSugerenciasCelular(false)
     setToast(true)
-    setTimeout(() => navigate(`/calendario?fecha=${fecha}`), 500)
+    setTimeout(() => navigate(`/calendario?fecha=${fecha}&hora=${hora}`), 500)
   }
 
   const handleSubmit = (e) => {

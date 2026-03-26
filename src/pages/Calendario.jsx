@@ -242,6 +242,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
 export default function Calendario() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const horaParam = searchParams.get('hora')
   const [vista, setVista] = useState('dia')
   const [fechaActual, setFechaActual] = useState(searchParams.get('fecha') || todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
@@ -283,7 +284,14 @@ export default function Calendario() {
   }, [])
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = Math.max(0, nowPx - 100)
+    if (!scrollRef.current) return
+    if (horaParam) {
+      const [h, m] = horaParam.split(':').map(Number)
+      const citaPx = minutesToPx(h * 60 + (m || 0), HOUR_START)
+      scrollRef.current.scrollTop = Math.max(0, citaPx - 120)
+    } else {
+      scrollRef.current.scrollTop = Math.max(0, nowPx - 100)
+    }
   }, [vista])
 
   const handleCambiarEstado = (cita, nuevoEstado) => {
