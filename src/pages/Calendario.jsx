@@ -171,9 +171,25 @@ function CitaBlock({ cita, onClick, compact: forceCompact = false, hourStart = D
 
 function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint = false }) {
   const [scrolled, setScrolled] = useState(false)
+  const [atEnd, setAtEnd] = useState(false)
+  const scrollRef = useRef(null)
+
+  const handleScroll = (e) => {
+    const el = e.currentTarget
+    setScrolled(el.scrollLeft > 10)
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4)
+  }
+
+  const scrollBy = (dir) => {
+    if (!scrollRef.current) return
+    scrollRef.current.scrollLeft += dir * scrollRef.current.clientWidth
+  }
+
+  const btnClass = "absolute z-30 w-6 h-10 flex items-center justify-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg shadow-md transition-all hover:bg-white dark:hover:bg-gray-800"
+
   return (
     <div className="absolute left-0 right-0 z-10" style={{ top: `${cluster.topPx}px`, height: `${cluster.heightPx + 8}px` }}>
-      <div className="absolute inset-0 overflow-x-auto" style={{ scrollbarWidth: "none" }} onScroll={e => setScrolled(e.currentTarget.scrollLeft > 10)}>
+      <div ref={scrollRef} className="absolute inset-0 overflow-x-auto" style={{ scrollbarWidth: "none" }} onScroll={handleScroll}>
         <div style={{ width: `${innerWidthPct}%`, height: "100%", position: "relative" }}>
           {cluster.citas.map(cita => {
             const cfg = ESTADO_CONFIG[cita.estado] || ESTADO_CONFIG.Apartada
@@ -189,6 +205,8 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
           })}
         </div>
       </div>
+
+      {/* Móvil — fade + badge */}
       {!hideHint && (
         <>
           <div className="absolute top-0 right-0 bottom-0 pointer-events-none z-20 transition-opacity duration-200"
@@ -197,6 +215,36 @@ function ScrollCluster({ cluster, innerWidthPct, colWidthPct, onClick, hideHint 
             style={{ top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`, transform: "translateY(-50%)", opacity: scrolled ? 0 : 1 }}>
             <span className="bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">+{cluster.hiddenCount}</span>
           </div>
+        </>
+      )}
+
+      {/* Desktop — flechas */}
+      {hideHint && (
+        <>
+          <button
+            onClick={() => scrollBy(-1)}
+            className={`${btnClass} left-0`}
+            style={{
+              top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`,
+              transform: 'translateY(-50%)',
+              opacity: scrolled ? 1 : 0,
+              pointerEvents: scrolled ? 'auto' : 'none'
+            }}
+          >
+            <ChevronLeft size={14} className="text-gray-700 dark:text-gray-300" />
+          </button>
+          <button
+            onClick={() => scrollBy(1)}
+            className={`${btnClass} right-0`}
+            style={{
+              top: `${cluster.citas[0]._topInCluster + cluster.citas[0]._height / 2}px`,
+              transform: 'translateY(-50%)',
+              opacity: atEnd ? 0 : 1,
+              pointerEvents: atEnd ? 'none' : 'auto'
+            }}
+          >
+            <ChevronRight size={14} className="text-gray-700 dark:text-gray-300" />
+          </button>
         </>
       )}
     </div>
@@ -230,7 +278,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
       </div>
       {scrollClusters.map((cluster, i) => {
         const isDesktop = window.innerWidth >= 768
-        const MAX_VISIBLE = isDesktop ? cluster.totalCols : 3
+        const MAX_VISIBLE = 3
         const innerWidthPct = cluster.totalCols / MAX_VISIBLE * 100
         const colWidthPct = 100 / cluster.totalCols
         return <ScrollCluster key={i} cluster={cluster} innerWidthPct={innerWidthPct} colWidthPct={colWidthPct} onClick={onClick} hideHint={isDesktop} />
