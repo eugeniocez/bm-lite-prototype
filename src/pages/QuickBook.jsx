@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Zap, Clock } from 'lucide-react'
+import { Plus, DoorOpen } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
@@ -135,14 +135,14 @@ export default function QuickBook() {
           : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-900 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
       }`}
     >
-      <Clock size={15} />
+      <DoorOpen size={15} />
       Cliente sin Cita
     </button>
   )
 
   return (
     <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} action={WalkInBtn} />
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Plus} action={WalkInBtn} />
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (

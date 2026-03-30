@@ -446,7 +446,7 @@ export default function Calendario() {
       {vista === '3dias' && (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-            <div className="w-10 shrink-0" />
+            <div className="w-14 shrink-0" />
             {tresDias.map((d) => {
               const esHoyD = d === todayStr()
               return (
@@ -461,11 +461,11 @@ export default function Calendario() {
           </div>
           <div ref={scrollRef} className="flex-1 overflow-y-auto" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT + CELL_HEIGHT}px` }}>
-              <div className="w-10 shrink-0 select-none">
+              <div className="w-14 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
-                    <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
+                    <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '11px' }}>
+                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                     </span>
                   </div>
                 ))}
@@ -481,7 +481,7 @@ export default function Calendario() {
       {vista === 'semana' && (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-            <div className="w-10 shrink-0" />
+            <div className="w-14 shrink-0" />
             {semana.map((d) => {
               const esHoyD = d === todayStr()
               return (
@@ -496,11 +496,11 @@ export default function Calendario() {
           </div>
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
             <div className="flex pr-4" style={{ minHeight: `${HOURS.length * CELL_HEIGHT + CELL_HEIGHT}px` }}>
-              <div className="w-10 shrink-0 select-none">
+              <div className="w-14 shrink-0 select-none">
                 {HOURS.map(hour => (
                   <div key={hour} style={{ height: `${CELL_HEIGHT}px` }} className="flex items-start justify-end pr-1.5 pt-1">
-                    <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '9px' }}>
-                      {hour === 12 ? '12p' : hour > 12 ? `${hour - 12}p` : `${hour}a`}
+                    <span className="text-gray-400 dark:text-gray-600 font-medium tabular-nums" style={{ fontSize: '11px' }}>
+                      {hour === 12 ? '12pm' : hour > 12 ? `${hour - 12}pm` : `${hour}am`}
                     </span>
                   </div>
                 ))}
