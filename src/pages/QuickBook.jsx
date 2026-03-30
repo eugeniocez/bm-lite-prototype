@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, DoorOpen } from 'lucide-react'
+import { Zap, DoorOpen } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
@@ -142,7 +142,7 @@ export default function QuickBook() {
 
   return (
     <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Plus} action={WalkInBtn} />
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} action={WalkInBtn} />
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (
