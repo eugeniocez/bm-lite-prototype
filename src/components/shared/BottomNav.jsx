@@ -28,9 +28,9 @@ export default function BottomNav() {
       <div className="flex-1 flex flex-col items-center pb-2">
         <Link
           to="/quickbook"
-          className="w-14 h-14 -mt-5 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+          className="w-12 h-12 -mt-4 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
         >
-          <Plus size={26} className="text-white dark:text-gray-900" strokeWidth={2.5} />
+          <Plus size={22} className="text-white dark:text-gray-900" strokeWidth={2.5} />
         </Link>
         <span className={`text-xs mt-1 ${pathname.startsWith('/quickbook') ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-400 dark:text-gray-600'}`}>
           Nueva Cita
