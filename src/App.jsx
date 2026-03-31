@@ -8,10 +8,12 @@ import Invite from './pages/Invite'
 import Bienvenida from './pages/Bienvenida'
 import Registro from './pages/Registro'
 import Login from './pages/Login'
+import TrialExpirando from './pages/TrialExpirando'
+import TrialDemo from './pages/TrialDemo'
 
 function AppContent() {
   const location = useLocation()
-  const sinNav = ['/bienvenida', '/registro', '/login'].includes(location.pathname)
+  const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
   const vistaPreviamente = localStorage.getItem('bm-bienvenida-vista') === 'true'
 
   if (location.pathname === '/' && vistaPreviamente) {
@@ -30,6 +32,8 @@ function AppContent() {
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/bienvenida" element={<Bienvenida />} />
+          <Route path="/trial" element={<TrialExpirando />} />
+          <Route path="/trial-demo" element={<TrialDemo />} />
         </Routes>
       </div>
     )
