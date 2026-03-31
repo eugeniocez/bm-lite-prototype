@@ -15,7 +15,7 @@ import SettingsPage from './pages/Settings'
 
 function AppContent() {
   const location = useLocation()
-  const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
+  const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm', '/settings'].includes(location.pathname)
   const vistaPreviamente = localStorage.getItem('bm-bienvenida-vista') === 'true'
 
   if (location.pathname === '/' && vistaPreviamente) {
@@ -37,6 +37,7 @@ function AppContent() {
           <Route path="/trial" element={<TrialExpirando />} />
           <Route path="/trial-demo" element={<TrialDemo />} />
           <Route path="/quickconfirm" element={<QuickConfirm />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </div>
     )

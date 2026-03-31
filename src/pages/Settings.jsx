@@ -1,4 +1,5 @@
-import { Settings, CreditCard, Shield, Zap, X, ChevronRight } from 'lucide-react'
+import { Settings, Shield, ChevronRight, ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useNegocioStore } from '../store/negocio'
 import PageHeader from '../components/shared/PageHeader'
 
@@ -12,20 +13,26 @@ function diasRestantes(fechaRegistro) {
 }
 
 export default function SettingsPage() {
+  const navigate = useNavigate()
   const { nombreBarberia, plan, fechaRegistro, activarSuscripcion } = useNegocioStore()
   const esTrial = plan === 'trial'
   const dias = diasRestantes(fechaRegistro)
   const urgente = dias <= 5
 
   return (
-    <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      <PageHeader
-        title="Ajustes"
-        subtitle={nombreBarberia}
-        icon={Settings}
-      />
+    <div className="h-screen bg-gray-50 dark:bg-gray-950 flex flex-col overflow-hidden">
+      <div className="flex flex-col flex-1 w-full max-w-md mx-auto overflow-hidden">
+      <div className="px-5 pt-12 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <ArrowLeft size={22} />
+        </button>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Ajustes</h1>
+          <p className="text-sm text-gray-400 dark:text-gray-500">{nombreBarberia}</p>
+        </div>
+      </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 pb-24">
+      <div className="flex-1 overflow-hidden px-5 py-5 space-y-5">
 
         {/* Badge de plan */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center justify-between">
@@ -143,6 +150,7 @@ export default function SettingsPage() {
         </div>
 
       </div>
+    </div>
     </div>
   )
 }
