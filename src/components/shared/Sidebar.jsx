@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Zap, Calendar, Users, Send } from 'lucide-react'
+import { Zap, Calendar, Users, Send, Settings } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { to: '/quickbook', label: 'Nueva Cita', Icon: Zap },
   { to: '/calendario', label: 'Calendario', Icon: Calendar },
   { to: '/clientes', label: 'Clientes', Icon: Users },
+  { to: '/quickbook', label: 'Nueva Cita', Icon: Zap },
   { to: '/invite', label: 'INVITE', Icon: Send },
+  { to: '/settings', label: 'Ajustes', Icon: Settings },
 ]
 
 export default function Sidebar() {

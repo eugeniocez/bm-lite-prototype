@@ -23,6 +23,7 @@ export default function Registro() {
     } else if (paso === 2) {
       if (codigo === CODIGO_DEMO) {
         useNegocioStore.getState().setNombreBarberia(barberia)
+        useNegocioStore.getState().setFechaRegistro(new Date().toISOString().split('T')[0])
         navigate('/bienvenida')
       } else {
         setError('Código incorrecto. Usa 1234 para este demo.')
@@ -78,6 +79,9 @@ export default function Registro() {
               Enviar código
               <ArrowRight size={18} />
             </button>
+            <p className="text-center text-gray-400 text-xs mt-3">
+              30 días gratis · Sin tarjeta de crédito
+            </p>
           </form>
           <p className="text-center text-gray-400 text-sm mt-6">
             ¿Ya tienes cuenta?{' '}

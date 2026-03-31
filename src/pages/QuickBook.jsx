@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Zap, DoorOpen } from 'lucide-react'
+import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
@@ -135,7 +135,7 @@ export default function QuickBook() {
           : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-900 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
       }`}
     >
-      <DoorOpen size={15} />
+      <Clock size={15} />
       Cliente sin Cita
     </button>
   )

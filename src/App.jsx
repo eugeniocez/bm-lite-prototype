@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import TrialExpirando from './pages/TrialExpirando'
 import TrialDemo from './pages/TrialDemo'
 import QuickConfirm from './pages/QuickConfirm'
+import SettingsPage from './pages/Settings'
 
 function AppContent() {
   const location = useLocation()
@@ -60,6 +61,7 @@ function AppContent() {
               <Route path="/calendario" element={<Calendario />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/invite" element={<Invite />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </main>
 
