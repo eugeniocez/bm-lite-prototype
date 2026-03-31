@@ -10,6 +10,7 @@ import Registro from './pages/Registro'
 import Login from './pages/Login'
 import TrialExpirando from './pages/TrialExpirando'
 import TrialDemo from './pages/TrialDemo'
+import QuickConfirm from './pages/QuickConfirm'
 
 function AppContent() {
   const location = useLocation()
@@ -34,6 +35,7 @@ function AppContent() {
           <Route path="/bienvenida" element={<Bienvenida />} />
           <Route path="/trial" element={<TrialExpirando />} />
           <Route path="/trial-demo" element={<TrialDemo />} />
+          <Route path="/quickconfirm" element={<QuickConfirm />} />
         </Routes>
       </div>
     )
