@@ -21,21 +21,21 @@ export default function SettingsPage() {
     <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <PageHeader title="Ajustes" subtitle={nombreBarberia} icon={Settings} />
 
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5 pb-24">
 
         {/* Tu barbería */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Tu barbería</p>
           </div>
-          <div className="px-4 py-3 flex items-center justify-between">
+          <div className="px-4 py-2.5 flex items-center justify-between">
             <p className="text-sm text-gray-500 dark:text-gray-400">Nombre</p>
             <p className="text-sm font-semibold text-gray-900 dark:text-white">{nombreBarberia}</p>
           </div>
         </div>
 
         {/* Plan actual */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center justify-between">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Plan actual</p>
             <p className="text-base font-bold text-gray-900 dark:text-white">
@@ -55,7 +55,7 @@ export default function SettingsPage() {
 
         {/* CTA suscripción — solo en trial */}
         {esTrial && (
-          <div className="rounded-2xl p-5 space-y-4" style={{ border: `2px solid ${ACCENT}`, background: '#FFF5F5' }}>
+          <div className="rounded-2xl p-4 space-y-3" style={{ border: `2px solid ${ACCENT}`, background: '#FFF5F5' }}>
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-gray-700">Días restantes del trial</p>
               <span
@@ -72,7 +72,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-3xl font-extrabold leading-none" style={{ color: ACCENT }}>$199</p>
+              <p className="text-2xl font-extrabold leading-none" style={{ color: ACCENT }}>$199</p>
               <p className="text-gray-400 text-sm mb-0.5">MXN / mes</p>
             </div>
             <p className="text-xs text-gray-400">SMS · Recordatorios · Llamadas · INVITE · Todo incluido</p>
@@ -101,14 +101,14 @@ export default function SettingsPage() {
 
         {/* Soporte */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Soporte</p>
           </div>
-          <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-2.5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800">
             <Phone size={15} className="text-gray-400 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">+52 81 1234 5678</p>
           </div>
-          <div className="px-4 py-3 flex items-center gap-3">
+          <div className="px-4 py-2.5 flex items-center gap-3">
             <Mail size={15} className="text-gray-400 shrink-0" />
             <p className="text-sm text-gray-700 dark:text-gray-300">soporte@barbermonster.com</p>
           </div>
@@ -116,13 +116,13 @@ export default function SettingsPage() {
 
         {/* Demo */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Demo</p>
             <p className="text-xs text-gray-400 mt-0.5">Solo para encender y apagar estados del prototipo</p>
           </div>
           <button
             onClick={esTrial ? activarSuscripcion : () => useNegocioStore.setState({ plan: 'trial' })}
-            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             <p className="text-sm text-gray-700 dark:text-gray-300">
               {esTrial ? 'Simular cuenta pagada' : 'Simular trial'}
@@ -133,8 +133,8 @@ export default function SettingsPage() {
 
         {/* Logo */}
         <div className="flex flex-col items-center pt-4 pb-2 gap-2">
-          <img src="/logo.webp" alt="BarberMonster" className="h-12 dark:hidden opacity-40" />
-          <img src="/logo-white.webp" alt="BarberMonster" className="h-12 hidden dark:block opacity-40" />
+          <img src="/logo.webp" alt="BarberMonster" className="h-8 dark:hidden opacity-30" />
+          <img src="/logo-white.webp" alt="BarberMonster" className="h-8 hidden dark:block opacity-30" />
           <p className="text-xs text-gray-300 dark:text-gray-700">barbermonster.com</p>
         </div>
 
