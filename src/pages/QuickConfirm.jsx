@@ -181,7 +181,7 @@ export default function QuickConfirm() {
         className="min-h-screen flex justify-center"
         style={{ background: 'radial-gradient(ellipse 120% 60% at 50% -10%, rgba(231,57,70,0.07) 0%, transparent 70%), #F3F4F6' }}
       >
-        <div className="w-full max-w-sm bg-white flex flex-col min-h-screen">
+        <div className="w-full max-w-md bg-white flex flex-col min-h-screen">
 
           <div className="flex-1 flex flex-col px-5 pt-10 pb-8">
 
