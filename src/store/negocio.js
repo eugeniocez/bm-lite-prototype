@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { todayStr } from '../utils/helpers'
 
 export const useNegocioStore = create((set) => ({
-  nombreBarberia: 'Barber Monster',
+  nombreBarberia: 'Barbería El Tigre',
   plan: 'trial',           // 'trial' | 'activo'
   fechaRegistro: todayStr(), // simula registro hoy por default
 

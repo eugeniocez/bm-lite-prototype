@@ -135,6 +135,13 @@ export default function SettingsPage() {
           </button>
         </div>
 
+      {/* Logo */}
+        <div className="flex flex-col items-center pt-4 pb-2 gap-2">
+          <img src="/logo.webp" alt="BarberMonster" className="h-8 dark:hidden opacity-40" />
+          <img src="/logo-white.webp" alt="BarberMonster" className="h-8 hidden dark:block opacity-40" />
+          <p className="text-xs text-gray-300 dark:text-gray-700">barbermonster.com</p>
+        </div>
+
       </div>
     </div>
   )
