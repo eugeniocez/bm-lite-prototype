@@ -3,8 +3,8 @@ import { ArrowLeft, Shield, Zap, X } from 'lucide-react'
 import { useNegocioStore } from '../store/negocio'
 
 /**
- * TrialExpirando — Página full-screen sin scroll
- * Ruta: /trial
+ * AvisoTrial — Página full-screen sin scroll
+ * Ruta: /aviso-trial
  *
  * Cambia DIAS_DEMO para probar los dos estados visuales: urgente (1-2) y aviso (3-5)
  */
@@ -19,7 +19,7 @@ const BENEFICIOS = [
   { icon: X,      texto: 'Sin contrato — cancela cuando quieras' },
 ]
 
-export default function TrialExpirando() {
+export default function AvisoTrial() {
   const navigate = useNavigate()
   const nombreBarberia = useNegocioStore(s => s.nombreBarberia) || 'tu barbería'
 
@@ -33,7 +33,7 @@ export default function TrialExpirando() {
         {/* Header — solo flecha */}
         <div className="flex items-center px-5 pt-10 pb-2 shrink-0">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/calendario')}
             className="w-10 h-10 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             aria-label="Regresar"
           >
@@ -128,7 +128,7 @@ export default function TrialExpirando() {
               Activar suscripción
             </button>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/calendario')}
               className="w-full text-gray-400 dark:text-gray-600 font-medium py-3 text-sm hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
             >
               Recordarme después
