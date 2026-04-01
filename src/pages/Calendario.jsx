@@ -525,10 +525,10 @@ export default function Calendario() {
           citaSeleccionada ? (
             <button
               onClick={() => navigate(`/clientes?celular=${encodeURIComponent(citaSeleccionada.celular)}`)}
-              className="inline-flex items-center gap-1 text-xs font-normal text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-0.5"
             >
               Editar datos de cliente en el directorio
-              <ArrowRight size={12} />
+              <ArrowRight size={14} />
             </button>
           ) : null
         }

@@ -7,6 +7,7 @@ import { ESTADO_CONFIG } from '../utils/estados'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
+import { useToastStore } from '../store/toast'
 
 export default function Clientes() {
   const contactos = useDirectorioStore(s => s.contactos)
@@ -221,6 +222,8 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
 }
 
 function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGuardarEdicion, esPanel = false }) {
+  const contactos = useDirectorioStore(s => s.contactos)
+  const mostrarToast = useToastStore(s => s.mostrar)
   const getCitasPorCliente = useCitasStore(s => s.getCitasPorCliente)
   const todasLasCitas = getCitasPorCliente(contacto.celular)
   const historial = todasLasCitas
@@ -257,19 +260,50 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGua
     .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0] || null
 
   const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-400"
+  const celularNormalizado = `52${celularEdit}`
+  const notaNormalizada = notaEdit.trim() || null
+  const originalNota = contacto.nota || null
+  const hayCambios =
+    nombreEdit.trim() !== contacto.nombre ||
+    celularNormalizado !== contacto.celular ||
+    notaNormalizada !== originalNota
+  const celularDuplicado = contactos.some(c => c.id !== contacto.id && c.celular === celularNormalizado)
+  const puedeGuardar = !!nombreEdit.trim() && celularEdit.length === 10 && hayCambios && !celularDuplicado
 
-  const handleGuardarEdicion = () => {
-    if (!nombreEdit.trim() || celularEdit.length !== 10) return
-    onGuardarEdicion({
-      nombre: nombreEdit.trim(),
-      celular: `52${celularEdit}`,
-      nota: notaEdit.trim() || null,
-    })
+  const abrirEdicion = () => {
+    setNombreEdit(contacto.nombre)
+    setCelularEdit(contacto.celular.slice(-10))
+    setNotaEdit(contacto.nota || '')
+    setEditando(true)
+  }
+
+  const cerrarEdicion = () => {
+    if (hayCambios) {
+      const confirmar = window.confirm('Tienes cambios sin guardar. ¿Quieres descartarlos?')
+      if (!confirmar) return
+    }
     setEditando(false)
   }
 
+  const handleGuardarEdicion = () => {
+    if (!puedeGuardar) return
+
+    if (celularNormalizado !== contacto.celular) {
+      const confirmarCambioCelular = window.confirm('Vas a cambiar el celular del cliente. Esto puede afectar su vinculación en búsquedas y futuras citas. ¿Deseas continuar?')
+      if (!confirmarCambioCelular) return
+    }
+
+    onGuardarEdicion({
+      nombre: nombreEdit.trim(),
+      celular: celularNormalizado,
+      nota: notaNormalizada,
+    })
+    setEditando(false)
+    mostrarToast('Datos del cliente actualizados')
+  }
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="relative flex flex-col h-full">
       <div className={`flex items-center gap-3 px-5 border-b border-gray-100 dark:border-gray-800 ${esPanel ? 'pt-6 pb-4' : 'pt-12 pb-4'}`}>
         {!esPanel && (
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
@@ -333,49 +367,12 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGua
         )}
 
         <div className="space-y-2 pt-1">
-          {!editando ? (
-            <button
-              onClick={() => setEditando(true)}
-              className="w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              <PencilLine size={16} />Editar datos del cliente
-            </button>
-          ) : (
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nombre *</label>
-                <input type="text" value={nombreEdit} onChange={e => setNombreEdit(e.target.value)} className={inputClass} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Celular *</label>
-                <PhoneInput value={celularEdit} onChange={setCelularEdit} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nota</label>
-                <input type="text" value={notaEdit} onChange={e => setNotaEdit(e.target.value)} className={inputClass} placeholder="Agregar nota del cliente" />
-              </div>
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <button
-                  onClick={handleGuardarEdicion}
-                  disabled={!nombreEdit.trim() || celularEdit.length !== 10}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <Check size={16} />Guardar
-                </button>
-                <button
-                  onClick={() => {
-                    setEditando(false)
-                    setNombreEdit(contacto.nombre)
-                    setCelularEdit(contacto.celular.slice(-10))
-                    setNotaEdit(contacto.nota || '')
-                  }}
-                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          )}
+          <button
+            onClick={abrirEdicion}
+            className="w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <PencilLine size={16} />Editar datos del cliente
+          </button>
 
           <button onClick={onQuickBook} className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
             <Zap size={16} />Nueva cita
@@ -393,6 +390,54 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGua
           </button>
         </div>
       </div>
+
+      {editando && (
+        <div className="absolute inset-0 z-30 bg-white dark:bg-gray-900 flex flex-col">
+          <div className="px-5 pt-6 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+            <div className="flex items-center gap-3">
+              <button onClick={cerrarEdicion} className="p-1 -ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                <ArrowLeft size={20} />
+              </button>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Editar cliente</h2>
+            </div>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">Actualiza nombre, celular y nota del perfil.</p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nombre *</label>
+              <input type="text" value={nombreEdit} onChange={e => setNombreEdit(e.target.value)} className={inputClass} autoFocus />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Celular *</label>
+              <PhoneInput value={celularEdit} onChange={setCelularEdit} />
+              {celularDuplicado && <p className="text-xs text-red-500 mt-1.5">Este celular ya existe en otro cliente del directorio.</p>}
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nota</label>
+              <input type="text" value={notaEdit} onChange={e => setNotaEdit(e.target.value)} className={inputClass} placeholder="Agregar nota del cliente" />
+            </div>
+          </div>
+
+          <div className="px-5 pb-8 pt-3 space-y-2 border-t border-gray-100 dark:border-gray-800">
+            <button
+              onClick={handleGuardarEdicion}
+              disabled={!puedeGuardar}
+              className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Check size={16} />Guardar cambios
+            </button>
+            <button
+              onClick={cerrarEdicion}
+              className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
