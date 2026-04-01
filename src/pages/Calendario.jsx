@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -517,7 +517,22 @@ export default function Calendario() {
         </div>
       )}
 
-      <Modal isOpen={!!citaSeleccionada} onClose={() => setCitaSeleccionada(null)} title={citaSeleccionada?.nombreCliente || ''}>
+      <Modal
+        isOpen={!!citaSeleccionada}
+        onClose={() => setCitaSeleccionada(null)}
+        title={citaSeleccionada?.nombreCliente || ''}
+        subtitle={
+          citaSeleccionada ? (
+            <button
+              onClick={() => navigate(`/clientes?celular=${encodeURIComponent(citaSeleccionada.celular)}`)}
+              className="inline-flex items-center gap-1 text-xs font-normal text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              Editar datos de cliente en el directorio
+              <ArrowRight size={12} />
+            </button>
+          ) : null
+        }
+      >
         {citaSeleccionada && <CitaDetalle cita={citaSeleccionada} onCambiarEstado={handleCambiarEstado} />}
       </Modal>
     </div>

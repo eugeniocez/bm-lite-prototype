@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus, PencilLine, Check } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
 import { daysSince, formatDate, todayStr } from '../utils/helpers'
 import { ESTADO_CONFIG } from '../utils/estados'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
 
@@ -12,10 +12,19 @@ export default function Clientes() {
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
+  const actualizarContacto = useDirectorioStore(s => s.actualizarContacto)
   const [busqueda, setBusqueda] = useState('')
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null)
   const [agregandoCliente, setAgregandoCliente] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const celular = searchParams.get('celular')
+    if (!celular) return
+    const match = contactos.find(c => c.celular === celular)
+    if (match) setContactoSeleccionado(match)
+  }, [searchParams, contactos])
 
   const filtrados = contactos
     .filter(c => c.nombre.toLowerCase().includes(busqueda.toLowerCase()) || c.celular.includes(busqueda))
@@ -67,7 +76,10 @@ export default function Clientes() {
                 return (
                   <button
                     key={contacto.id}
-                    onClick={() => setContactoSeleccionado(contacto)}
+                    onClick={() => {
+                      setContactoSeleccionado(contacto)
+                      setSearchParams({ celular: contacto.celular }, { replace: true })
+                    }}
                     className={`w-full flex items-center gap-3 px-5 py-4 transition-colors text-left ${
                       activo
                         ? 'bg-gray-100 dark:bg-gray-800'
@@ -94,8 +106,15 @@ export default function Clientes() {
           <div className="md:hidden fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 z-50 flex flex-col">
             <ContactoDetalle
               contacto={contactoSeleccionado}
-              onClose={() => setContactoSeleccionado(null)}
+              onClose={() => {
+                setContactoSeleccionado(null)
+                setSearchParams({}, { replace: true })
+              }}
               onToggleInvite={handleToggleInvite}
+              onGuardarEdicion={(payload) => {
+                actualizarContacto(contactoSeleccionado.id, payload)
+                setContactoSeleccionado(prev => ({ ...prev, ...payload }))
+              }}
               onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
             />
           </div>
@@ -103,8 +122,15 @@ export default function Clientes() {
           <div className="hidden md:flex flex-1 flex-col overflow-y-auto">
             <ContactoDetalle
               contacto={contactoSeleccionado}
-              onClose={() => setContactoSeleccionado(null)}
+              onClose={() => {
+                setContactoSeleccionado(null)
+                setSearchParams({}, { replace: true })
+              }}
               onToggleInvite={handleToggleInvite}
+              onGuardarEdicion={(payload) => {
+                actualizarContacto(contactoSeleccionado.id, payload)
+                setContactoSeleccionado(prev => ({ ...prev, ...payload }))
+              }}
               onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
               esPanel
             />
@@ -194,10 +220,21 @@ function NuevoClientePantalla({ onClose, onGuardar }) {
   )
 }
 
-function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPanel = false }) {
+function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGuardarEdicion, esPanel = false }) {
   const getCitasPorCliente = useCitasStore(s => s.getCitasPorCliente)
   const todasLasCitas = getCitasPorCliente(contacto.celular)
   const historial = todasLasCitas
+  const [editando, setEditando] = useState(false)
+  const [nombreEdit, setNombreEdit] = useState(contacto.nombre)
+  const [celularEdit, setCelularEdit] = useState(contacto.celular.slice(-10))
+  const [notaEdit, setNotaEdit] = useState(contacto.nota || '')
+
+  useEffect(() => {
+    setEditando(false)
+    setNombreEdit(contacto.nombre)
+    setCelularEdit(contacto.celular.slice(-10))
+    setNotaEdit(contacto.nota || '')
+  }, [contacto.id])
 
   // Calcular última visita real desde citas confirmadas o walk-in
   const hoy = todayStr()
@@ -218,6 +255,18 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
   const proximaCita = todasLasCitas
     .filter(c => c.fecha >= hoy && !['Cancelada', 'NoShow'].includes(c.estado))
     .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0] || null
+
+  const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-400"
+
+  const handleGuardarEdicion = () => {
+    if (!nombreEdit.trim() || celularEdit.length !== 10) return
+    onGuardarEdicion({
+      nombre: nombreEdit.trim(),
+      celular: `52${celularEdit}`,
+      nota: notaEdit.trim() || null,
+    })
+    setEditando(false)
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -283,7 +332,51 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, esPan
           </div>
         )}
 
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2 pt-1">
+          {!editando ? (
+            <button
+              onClick={() => setEditando(true)}
+              className="w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <PencilLine size={16} />Editar datos del cliente
+            </button>
+          ) : (
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nombre *</label>
+                <input type="text" value={nombreEdit} onChange={e => setNombreEdit(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Celular *</label>
+                <PhoneInput value={celularEdit} onChange={setCelularEdit} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nota</label>
+                <input type="text" value={notaEdit} onChange={e => setNotaEdit(e.target.value)} className={inputClass} placeholder="Agregar nota del cliente" />
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={handleGuardarEdicion}
+                  disabled={!nombreEdit.trim() || celularEdit.length !== 10}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Check size={16} />Guardar
+                </button>
+                <button
+                  onClick={() => {
+                    setEditando(false)
+                    setNombreEdit(contacto.nombre)
+                    setCelularEdit(contacto.celular.slice(-10))
+                    setNotaEdit(contacto.nota || '')
+                  }}
+                  className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+
           <button onClick={onQuickBook} className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
             <Zap size={16} />Nueva cita
           </button>
