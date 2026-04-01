@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
-import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
+import { todayStr } from '../utils/helpers'
 import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
@@ -77,12 +77,6 @@ export default function QuickBook() {
     }
   }
 
-  const handleWalkIn = () => {
-    const nuevoEstado = !esWalkIn
-    setEsWalkIn(nuevoEstado)
-    if (nuevoEstado) { setFecha(todayStr()); setHora(nowTimeStr()) }
-  }
-
   const crearCita = (data) => {
     const { nombre, celular, fecha, hora, nota, esWalkIn } = data
     const estado = esWalkIn ? 'WalkIn' : 'Apartada'
@@ -126,24 +120,9 @@ export default function QuickBook() {
 
   const inputClass = "w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 text-base focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-all shadow-sm"
 
-  const WalkInBtn = (
-    <button
-      type="button"
-      onClick={handleWalkIn}
-      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold border transition-all ${
-        esWalkIn
-          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-gray-900 dark:border-white'
-          : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-900 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
-      }`}
-    >
-      <Clock size={15} />
-      Cliente sin Cita
-    </button>
-  )
-
   return (
     <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} action={WalkInBtn} />
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} />
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (
