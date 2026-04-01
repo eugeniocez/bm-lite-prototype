@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Settings, ChevronRight } from 'lucide-react'
 import { useNegocioStore } from '../store/negocio'
 import { addDays, formatDate } from '../utils/helpers'
+import PageHeader from '../components/shared/PageHeader'
 
 const ACCENT = '#E63946'
 
@@ -58,13 +59,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      <div className="px-5 pt-6 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-        <div className="flex items-center gap-2">
-          <Settings size={20} className="text-gray-900 dark:text-white" />
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Ajustes</h1>
-        </div>
-        <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">Gestiona tu negocio y cuenta</p>
-      </div>
+      <PageHeader title="Ajustes" subtitle="Gestiona tu negocio y cuenta" icon={Settings} brand="lockup" />
 
       <div className="flex-1 overflow-y-auto px-4 pb-24">
 
@@ -146,12 +141,6 @@ export default function SettingsPage() {
             <ChevronRight size={14} className="text-gray-300 dark:text-gray-600" />
           </button>
         </Group>
-
-        {/* Logo */}
-        <div className="flex flex-col items-center pt-6 pb-2 gap-1.5">
-          <img src="/logo.webp" alt="BarberMonster" className="h-7 dark:hidden opacity-25" />
-          <img src="/logo-white.webp" alt="BarberMonster" className="h-7 hidden dark:block opacity-25" />
-        </div>
 
       </div>
     </div>

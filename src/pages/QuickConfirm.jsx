@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle2, RefreshCw, XCircle, ChevronLeft, Calendar, Clock, User, Check, X } from 'lucide-react'
+import BrandSignature from '../components/shared/BrandSignature'
 
 /**
  * QuickConfirm — Página pública del cliente
@@ -188,6 +189,7 @@ export default function QuickConfirm() {
             {/* Mensaje introductorio + badge de estado */}
             {enMain && (
               <div className="mb-6">
+                <BrandSignature variant="lockup" subdued className="mb-5 md:hidden" />
                 <p className="text-xl font-extrabold text-gray-900 leading-snug">
                   Hola, {cita.cliente.split(' ')[0]} 👋
                 </p>

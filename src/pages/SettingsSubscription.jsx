@@ -13,6 +13,7 @@ const BENEFICIOS = [
 import { useNavigate } from 'react-router-dom'
 import { useNegocioStore } from '../store/negocio'
 import { addDays, formatDate } from '../utils/helpers'
+import BrandSignature from '../components/shared/BrandSignature'
 
 const ACCENT = '#E63946'
 
@@ -73,11 +74,14 @@ export default function SettingsSubscriptionPage() {
   return (
     <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="px-5 pt-6 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="p-1 -ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <ArrowLeft size={20} />
           </button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">Suscripción</h1>
+          </div>
+          <BrandSignature variant="lockup" size="sm" subdued className="shrink-0 md:hidden" />
         </div>
         <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">Administra tu suscripción desde la app</p>
       </div>
