@@ -54,7 +54,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      <PageHeader title="Ajustes" subtitle={nombreBarberia} icon={Settings} />
+      <PageHeader title="Ajustes" icon={Settings} subtitle="Barbería El Tigre" />
 
       <div className="flex-1 overflow-y-auto px-4 pb-24">
 
@@ -70,15 +70,27 @@ export default function SettingsPage() {
           <Row
             label="Plan actual"
             value={
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={esTrial ? { background: '#FFFBEB', color: '#B45309' } : { background: '#F0FDF4', color: '#166534' }}
-              >
-                {esTrial ? 'Trial' : 'Activo'}
-              </span>
+              <div className="flex items-center gap-2">
+                <span
+                  className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={esTrial ? { background: '#FFFBEB', color: '#B45309' } : { background: '#F0FDF4', color: '#166534' }}
+                >
+                  {esTrial ? 'Trial' : 'Activo'}
+                </span>
+                {esTrial && (
+                  <span
+                    className="text-xs font-bold px-2 py-0.5 rounded-full"
+                    style={urgente
+                      ? { background: '#FEF2F2', color: '#E63946' }
+                      : { background: '#FFFBEB', color: '#B45309' }
+                    }
+                  >
+                    {dias === 0 ? 'Expirado' : dias === 1 ? '1 día restante' : `${dias} días restantes`}
+                  </span>
+                )}
+              </div>
             }
           />
-          {esTrial && <Row label="Días restantes" value={dias === 0 ? 'Expirado' : `${dias} días`} />}
         </Group>
 
         {/* CTA — solo trial */}
@@ -142,7 +154,6 @@ export default function SettingsPage() {
         <div className="flex flex-col items-center pt-6 pb-2 gap-1.5">
           <img src="/logo.webp" alt="BarberMonster" className="h-7 dark:hidden opacity-25" />
           <img src="/logo-white.webp" alt="BarberMonster" className="h-7 hidden dark:block opacity-25" />
-          <p className="text-xs text-gray-300 dark:text-gray-700">barbermonster.com</p>
         </div>
 
       </div>
