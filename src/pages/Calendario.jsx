@@ -535,7 +535,7 @@ function CitaDetalle({ cita, onCambiarEstado }) {
 
   const transicionesFiltradas = transiciones.filter(est => {
     if (noShowDisponible) return est !== 'Cancelada' && est !== 'SinConfirmar'
-    return est !== 'NoShow'
+    return est !== 'NoShow' && est !== 'SinConfirmar'
   })
 
   const ACCION_COLORS = {
@@ -617,30 +617,27 @@ function CitaDetalle({ cita, onCambiarEstado }) {
         <Row label="Origen" value={cita.origen === 'QuickBook' ? 'Nueva Cita' : cita.origen === 'WalkIn' ? 'Cliente sin Cita' : cita.origen} />
       </div>
 
-      {transicionesFiltradas.length > 0 && (
-        <div>
-          <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide mb-2">Cambiar estado</p>
-          <div className="space-y-2">
-            {transicionesFiltradas.map(est => (
-              <button key={est} onClick={() => handleAccion(est)} className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${ACCION_COLORS[est] || 'bg-gray-100 text-gray-700'}`}>
-                {ACCION_LABELS[est] || est}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Botón Reagendar — solo citas futuras */}
-      {!noShowDisponible && (
-        <button
-          onClick={() => setReagendando(true)}
-          className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          Reagendar
-        </button>
-      )}
-
-      {transicionesFiltradas.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No hay mas acciones disponibles para esta cita</p>}
+      <div className="flex flex-col gap-3">
+        {transicionesFiltradas.length > 0 && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide">Cambiar estado</p>
+        )}
+        {transicionesFiltradas.map(est => (
+          <button key={est} onClick={() => handleAccion(est)} className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${ACCION_COLORS[est] || 'bg-gray-100 text-gray-700'}`}>
+            {ACCION_LABELS[est] || est}
+          </button>
+        ))}
+        {!noShowDisponible && (
+          <button
+            onClick={() => setReagendando(true)}
+            className="w-full py-3 rounded-xl text-sm font-bold transition-colors bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+          >
+            Reagendar
+          </button>
+        )}
+        {transicionesFiltradas.length === 0 && noShowDisponible && (
+          <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No hay mas acciones disponibles para esta cita</p>
+        )}
+      </div>
     </div>
   )
 }
