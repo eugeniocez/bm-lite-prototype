@@ -294,12 +294,12 @@ export default function Calendario() {
   const [vista, setVista] = useState('dia')
   const [fechaActual, setFechaActual] = useState(searchParams.get('fecha') || todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
+  const [currentTime, setCurrentTime] = useState(() => new Date())
 
   useEffect(() => {
     setSearchParams({ fecha: fechaActual }, { replace: true })
-  }, [fechaActual])
+  }, [fechaActual, setSearchParams])
   const [usuariosOpen, setUsuariosOpen] = useState(false)
-  const [nowPx, setNowPx] = useState(getCurrentTimePx(DEFAULT_HOUR_START))
   const scrollRef = useRef(null)
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
@@ -329,9 +329,13 @@ export default function Calendario() {
     : DEFAULT_HOUR_END
 
   const HOURS = Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => HOUR_START + i)
+  const nowPx = useMemo(
+    () => minutesToPx(currentTime.getHours() * 60 + currentTime.getMinutes(), HOUR_START),
+    [currentTime, HOUR_START]
+  )
 
   useEffect(() => {
-    const interval = setInterval(() => setNowPx(getCurrentTimePx(HOUR_START)), 60000)
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -342,9 +346,9 @@ export default function Calendario() {
       const citaPx = minutesToPx(h * 60 + (m || 0), HOUR_START)
       scrollRef.current.scrollTop = Math.max(0, citaPx - 120)
     } else {
-      scrollRef.current.scrollTop = Math.max(0, nowPx - 100)
+      scrollRef.current.scrollTop = Math.max(0, getCurrentTimePx(HOUR_START) - 100)
     }
-  }, [vista])
+  }, [vista, horaParam, HOUR_START])
 
   const handleCambiarEstado = (cita, nuevoEstado) => {
     cambiarEstado(cita.id, nuevoEstado)

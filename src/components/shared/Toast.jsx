@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Check, X } from 'lucide-react'
 
-export default function Toast({ mensaje, visible, onClose, tipo = 'exito' }) {
+export default function Toast({ mensaje, visible, onClose }) {
   useEffect(() => {
     if (visible) {
       const t = setTimeout(onClose, 1500)

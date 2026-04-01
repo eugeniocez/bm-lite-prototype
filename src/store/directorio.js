@@ -66,12 +66,6 @@ export const useDirectorioStore = create(
       )
     })),
 
-    actualizarNota: (id, nota) => set(state => ({
-      contactos: state.contactos.map(c =>
-        c.id === id ? { ...c, nota } : c
-      )
-    })),
-
     actualizarContacto: (id, payload) => set(state => ({
       contactos: state.contactos.map(c =>
         c.id === id ? { ...c, ...payload } : c

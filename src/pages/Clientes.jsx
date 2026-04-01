@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus, PencilLine, Check } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
@@ -15,17 +15,11 @@ export default function Clientes() {
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
   const actualizarContacto = useDirectorioStore(s => s.actualizarContacto)
   const [busqueda, setBusqueda] = useState('')
-  const [contactoSeleccionado, setContactoSeleccionado] = useState(null)
   const [agregandoCliente, setAgregandoCliente] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const celular = searchParams.get('celular')
-    if (!celular) return
-    const match = contactos.find(c => c.celular === celular)
-    if (match) setContactoSeleccionado(match)
-  }, [searchParams, contactos])
+  const celularSeleccionado = searchParams.get('celular')
+  const contactoSeleccionado = contactos.find(c => c.celular === celularSeleccionado) || null
 
   const filtrados = contactos
     .filter(c => c.nombre.toLowerCase().includes(busqueda.toLowerCase()) || c.celular.includes(busqueda))
@@ -33,7 +27,6 @@ export default function Clientes() {
 
   const handleToggleInvite = () => {
     toggleInviteList(contactoSeleccionado.id)
-    setContactoSeleccionado(prev => ({ ...prev, enInviteList: !prev.enInviteList }))
   }
 
   const AgregarBtn = (
@@ -78,7 +71,6 @@ export default function Clientes() {
                   <button
                     key={contacto.id}
                     onClick={() => {
-                      setContactoSeleccionado(contacto)
                       setSearchParams({ celular: contacto.celular }, { replace: true })
                     }}
                     className={`w-full flex items-center gap-3 px-5 py-4 transition-colors text-left ${
@@ -106,33 +98,31 @@ export default function Clientes() {
           {/* Mobile — pantalla completa */}
           <div className="md:hidden fixed inset-0 max-w-md mx-auto bg-white dark:bg-gray-900 z-50 flex flex-col">
             <ContactoDetalle
+              key={contactoSeleccionado.id}
               contacto={contactoSeleccionado}
               onClose={() => {
-                setContactoSeleccionado(null)
                 setSearchParams({}, { replace: true })
               }}
               onToggleInvite={handleToggleInvite}
               onGuardarEdicion={(payload) => {
                 actualizarContacto(contactoSeleccionado.id, payload)
-                setContactoSeleccionado(prev => ({ ...prev, ...payload }))
               }}
-              onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
+              onQuickBook={() => { setSearchParams({}, { replace: true }); navigate('/quickbook') }}
             />
           </div>
           {/* Desktop — panel lateral */}
           <div className="hidden md:flex flex-1 flex-col overflow-y-auto">
             <ContactoDetalle
+              key={contactoSeleccionado.id}
               contacto={contactoSeleccionado}
               onClose={() => {
-                setContactoSeleccionado(null)
                 setSearchParams({}, { replace: true })
               }}
               onToggleInvite={handleToggleInvite}
               onGuardarEdicion={(payload) => {
                 actualizarContacto(contactoSeleccionado.id, payload)
-                setContactoSeleccionado(prev => ({ ...prev, ...payload }))
               }}
-              onQuickBook={() => { setContactoSeleccionado(null); navigate('/quickbook') }}
+              onQuickBook={() => { setSearchParams({}, { replace: true }); navigate('/quickbook') }}
               esPanel
             />
           </div>
@@ -231,13 +221,6 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGua
   const [nombreEdit, setNombreEdit] = useState(contacto.nombre)
   const [celularEdit, setCelularEdit] = useState(contacto.celular.slice(-10))
   const [notaEdit, setNotaEdit] = useState(contacto.nota || '')
-
-  useEffect(() => {
-    setEditando(false)
-    setNombreEdit(contacto.nombre)
-    setCelularEdit(contacto.celular.slice(-10))
-    setNotaEdit(contacto.nota || '')
-  }, [contacto.id])
 
   // Calcular última visita real desde citas confirmadas o walk-in
   const hoy = todayStr()

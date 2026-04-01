@@ -9,7 +9,6 @@ import Inicio from './pages/Inicio'
 import Registro from './pages/Registro'
 import Login from './pages/Login'
 import TrialExpirando from './pages/TrialExpirando'
-import TrialDemo from './pages/TrialDemo'
 import QuickConfirm from './pages/QuickConfirm'
 import SettingsPage from './pages/Settings'
 import SettingsProfilePage from './pages/SettingsProfile'
@@ -21,7 +20,7 @@ import { useToastStore } from './store/toast'
 
 function AppContent() {
   const location = useLocation()
-  const sinNav = ['/inicio', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
+  const sinNav = ['/inicio', '/registro', '/login', '/trial', '/quickconfirm'].includes(location.pathname)
   const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
   const { visible, mensaje, ocultar } = useToastStore()
   const vistaPreviamente = localStorage.getItem('bm-inicio-vista') === 'true'
@@ -43,7 +42,6 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/inicio" element={<Inicio />} />
           <Route path="/trial" element={<TrialExpirando />} />
-          <Route path="/trial-demo" element={<TrialDemo />} />
           <Route path="/quickconfirm" element={<QuickConfirm />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/settings/profile" element={<SettingsProfilePage />} />

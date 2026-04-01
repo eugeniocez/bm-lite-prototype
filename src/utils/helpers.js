@@ -6,11 +6,6 @@ export function todayStr() {
   return new Date().toISOString().split('T')[0]
 }
 
-export function nowTimeStr() {
-  const now = new Date()
-  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-}
-
 export function formatDate(dateStr) {
   if (!dateStr) return ''
   const [year, month, day] = dateStr.split('-')
@@ -20,7 +15,7 @@ export function formatDate(dateStr) {
 
 export function formatDateLong(dateStr) {
   if (!dateStr) return ''
-  const [year, month, day] = dateStr.split('-')
+  const [, month, day] = dateStr.split('-')
   const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
   const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
   const d = new Date(`${dateStr}T12:00:00`)

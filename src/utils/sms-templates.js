@@ -1,6 +1,5 @@
 import { useNegocioStore } from '../store/negocio'
 const getBarberia = () => useNegocioStore.getState().nombreBarberia
-export const WA_LINK = 'wa.me/528110001234'
 export const INVITE_PREVIEW_TOKENS = {
   cliente: '__invite_cliente__',
   barberia: '__invite_barberia__',
@@ -39,23 +38,6 @@ const resolveInviteContext = (input) => {
 }
 
 export const sms = {
-  confirmacion: (nombre, fecha, hora) =>
-    `Hola ${primerNombre(nombre)}, tu cita en ${getBarberia()} está confirmada para el ${fecha} a las ${hora}. Confirma, reagenda o cancela aquí: ${WA_LINK}`,
-
-  recordatorio: (nombre, fecha, hora) =>
-    `Hola ${primerNombre(nombre)}, te recordamos tu cita en ${getBarberia()} mañana ${fecha} a las ${hora}. Confirma, reagenda o cancela aquí: ${WA_LINK}`,
-
-  cancelacion: (nombre) =>
-    `Hola ${primerNombre(nombre)}, tu cita en ${getBarberia()} ha sido cancelada. Cuando quieras agendar de nuevo: ${WA_LINK}. ¡Te esperamos!`,
-
-  noShow: (nombre) =>
-    `Hola ${primerNombre(nombre)}, notamos que no pudiste asistir a tu cita de hoy en ${getBarberia()}. Cuando quieras podemos reagendarte aquí: ${WA_LINK}`,
-
-  walkIn: (nombre) =>
-    `¡Gracias por visitarnos hoy en ${getBarberia()}, ${primerNombre(nombre)}! Fue un placer atenderte. ¡Hasta pronto!`,
-
-  // ── INVITE ──────────────────────────────────────────────────────
-
   inviteV1: (input) => {
     const { nombre, barberia, whatsapp } = resolveInviteContext(input)
     return `Ey ${nombre}, hace tiempo que no te vemos por aquí en ${barberia}. ¿Qué tal si esta semana nos das el honor? Resérvalo aquí: ${whatsapp}`

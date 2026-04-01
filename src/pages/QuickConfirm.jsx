@@ -208,22 +208,27 @@ export default function QuickConfirm() {
                   { icon: User,     label: 'Cliente', value: cita.cliente },
                   { icon: Calendar, label: 'Fecha',   value: cita.fecha   },
                   { icon: Clock,    label: 'Hora',     value: cita.hora    },
-                ].map(({ icon: Icon, label, value }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-3.5 px-4 py-3.5 border-b border-gray-50"
-                  >
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-gray-50">
-                      <Icon size={16} className="text-gray-400" />
+                ].map((item) => {
+                  const { label, value } = item
+                  const IconComponent = item.icon
+
+                  return (
+                    <div
+                      key={label}
+                      className="flex items-center gap-3.5 px-4 py-3.5 border-b border-gray-50"
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-gray-50">
+                        <IconComponent size={16} className="text-gray-400" />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
+                          {label}
+                        </p>
+                        <p className="text-sm font-bold text-gray-900">{value}</p>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
-                        {label}
-                      </p>
-                      <p className="text-sm font-bold text-gray-900">{value}</p>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
 
                 {/* Fila de estado con badge */}
                 <div className="flex items-center gap-3.5 px-4 py-3.5">

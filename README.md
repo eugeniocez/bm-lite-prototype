@@ -1,13 +1,13 @@
-# BM Lite — Prototipo Frontend
+# BM Prototype — Prototipo Frontend
 
 Interfaz simplificada de BarberMonster. Prototipo visual/funcional sin backend real.
 
 ## Stack
 
-- React 18 + Vite
+- React 19 + Vite 8
 - Tailwind CSS 3
 - Zustand (estado en memoria — sin persistencia)
-- React Router v6
+- React Router v7
 - Lucide React (íconos)
 - date-fns
 
@@ -19,8 +19,8 @@ Interfaz simplificada de BarberMonster. Prototipo visual/funcional sin backend r
 ## Instalación
 
 ```bash
-git clone https://github.com/eugeniocez/bm-lite-prototype.git
-cd bm-lite-prototype
+git clone https://github.com/eugeniocez/bm-prototype.git
+cd bm-prototype
 npm install
 npm run dev
 ```
@@ -89,7 +89,7 @@ src/
 | M2 · Estados de cita (6 estados) | ✅ Completo |
 | M3 · Recordatorios | ✅ Arquitectura lista — SMS reales pendientes de backend |
 | M4 · Clientes | ✅ Completo + agregar cliente manual |
-| M5 · INVITE | ✅ Completo + 6 plantillas con día dinámico |
+| M5 · INVITE | ✅ Completo + 3 plantillas con día dinámico |
 | M6 · Walk-in | ✅ Completo |
 | M7 · No-show | ✅ Completo |
 | Reagendar cita | ✅ Completo — solo disponible en citas futuras |

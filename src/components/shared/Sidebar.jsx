@@ -19,7 +19,9 @@ export default function Sidebar() {
         <img src="/logo-white.webp" alt="BarberMonster" className="h-9 hidden dark:block" />
       </div>
       <nav className="flex-1 py-4 flex flex-col gap-1 px-2">
-        {NAV_ITEMS.map(({ to, label, Icon }) => {
+        {NAV_ITEMS.map((item) => {
+          const { to, label } = item
+          const IconComponent = item.Icon
           const active = pathname.startsWith(to)
           return (
             <Link
@@ -31,7 +33,7 @@ export default function Sidebar() {
                   : 'text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              <Icon size={20} strokeWidth={active ? 2.5 : 1.5} className="shrink-0" />
+              <IconComponent size={20} strokeWidth={active ? 2.5 : 1.5} className="shrink-0" />
               <span className={`hidden lg:block text-sm font-semibold whitespace-nowrap ${active ? 'text-gray-900 dark:text-white' : ''}`}>
                 {label}
               </span>

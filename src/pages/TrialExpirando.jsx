@@ -78,17 +78,21 @@ export default function TrialExpirando() {
 
           {/* 3 puntos de beneficio */}
           <div className="space-y-3 mb-6">
-            {BENEFICIOS.map(({ icon: Icon, texto }) => (
-              <div key={texto} className="flex items-center gap-3">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: '#FEF2F2' }}
-                >
-                  <Icon size={15} style={{ color: ACCENT }} />
+            {BENEFICIOS.map((beneficio) => {
+              const IconComponent = beneficio.icon
+
+              return (
+                <div key={beneficio.texto} className="flex items-center gap-3">
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: '#FEF2F2' }}
+                  >
+                    <IconComponent size={15} style={{ color: ACCENT }} />
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{beneficio.texto}</p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{texto}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Card de precio */}

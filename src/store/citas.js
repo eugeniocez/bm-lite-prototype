@@ -64,11 +64,6 @@ export const useCitasStore = create(
         .filter(c => c.fecha === fecha)
         .sort((a, b) => a.hora.localeCompare(b.hora)),
 
-    getCitasPorRango: (fechas) =>
-      get().citas
-        .filter(c => fechas.includes(c.fecha))
-        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora)),
-
     getCitasPorCliente: (celular) =>
       get().citas
         .filter(c => c.celular === celular)
