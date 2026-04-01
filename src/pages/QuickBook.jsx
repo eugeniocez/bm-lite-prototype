@@ -93,7 +93,7 @@ export default function QuickBook() {
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setSugerenciasCelular([]); setShowSugerenciasCelular(false)
-    mostrarToast(`✔︎ Cita creada y SMS enviado a +52${celular}`)
+    mostrarToast(`Cita creada y SMS enviado a +52${celular}`)
     setTimeout(() => navigate(`/calendario?fecha=${fecha}&hora=${hora}`), 500)
   }
 
