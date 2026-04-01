@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -19,9 +19,10 @@ export default function QuickBook() {
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
   const actualizarUltimaVisita = useDirectorioStore(s => s.actualizarUltimaVisita)
 
+  const [searchParams] = useSearchParams()
   const [celular, setCelular] = useState('')
   const [nombre, setNombre] = useState('')
-  const [fecha, setFecha] = useState(todayStr())
+  const [fecha, setFecha] = useState(searchParams.get('fecha') || todayStr())
   const [hora, setHora] = useState('10:00')
   const [nota, setNota] = useState('')
   const [esWalkIn, setEsWalkIn] = useState(false)

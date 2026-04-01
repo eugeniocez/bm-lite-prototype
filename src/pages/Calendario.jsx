@@ -289,11 +289,15 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
 
 export default function Calendario() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const horaParam = searchParams.get('hora')
   const [vista, setVista] = useState('dia')
   const [fechaActual, setFechaActual] = useState(searchParams.get('fecha') || todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
+
+  useEffect(() => {
+    setSearchParams({ fecha: fechaActual }, { replace: true })
+  }, [fechaActual])
   const [usuariosOpen, setUsuariosOpen] = useState(false)
   const [nowPx, setNowPx] = useState(getCurrentTimePx(DEFAULT_HOUR_START))
   const scrollRef = useRef(null)

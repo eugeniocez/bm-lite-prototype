@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Calendar, Users, Send, Settings, Plus } from 'lucide-react'
+import { todayStr } from '../../utils/helpers'
 
 const NAV_ITEMS = [
   { to: '/calendario', label: 'Calendario', Icon: Calendar },
@@ -9,7 +10,10 @@ const NAV_ITEMS = [
 ]
 
 export default function BottomNav() {
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
+  const quickbookTo = pathname.startsWith('/calendario')
+    ? `/quickbook?fecha=${new URLSearchParams(search).get('fecha') || todayStr()}`
+    : '/quickbook'
   return (
     <nav className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex items-end z-40 shadow-lg">
 
@@ -27,10 +31,10 @@ export default function BottomNav() {
       {/* Botón central + */}
       <div className="flex-1 flex flex-col items-center pb-2">
         <Link
-          to="/quickbook"
-          className="w-12 h-12 -mt-4 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+          to={quickbookTo}
+          className="w-14 h-14 -mt-5 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
         >
-          <Plus size={22} className="text-white dark:text-gray-900" strokeWidth={2.5} />
+          <Plus size={26} className="text-white dark:text-gray-900" strokeWidth={2.5} />
         </Link>
         <span className={`text-xs mt-1 ${pathname.startsWith('/quickbook') ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-400 dark:text-gray-600'}`}>
           Nueva Cita
