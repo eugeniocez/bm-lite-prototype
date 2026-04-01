@@ -123,7 +123,7 @@ export default function QuickBook() {
 
   return (
     <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} />
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} brand="lockup" />
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (
