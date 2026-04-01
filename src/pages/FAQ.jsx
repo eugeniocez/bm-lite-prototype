@@ -3,24 +3,24 @@ import { useNavigate } from 'react-router-dom'
 
 const FAQS = [
   {
-    q: '¿Cómo funciona el recordatorio automático?',
-    a: 'El sistema envía un SMS 24 horas antes de la cita con una liga para que el cliente confirme, reagende o cancele. Si no hay respuesta, se hace una llamada automática 2 horas antes.'
+    q: '¿Mis clientes tienen que crear una cuenta para confirmar?',
+    a: 'No. Tu cliente recibe un SMS con un link. Un toque y listo — confirma, reagenda o cancela sin descargar nada ni registrarse en ningún lado.'
   },
   {
-    q: '¿Qué pasa si mi cliente no confirma la cita?',
-    a: 'La cita pasa a estado "Sin confirmar" (amarillo en tu calendario). Tú decides si conservarla, liberarla o contactar al cliente directamente.'
+    q: '¿Cuánto tarda configurar la app?',
+    a: 'Cero configuración obligatoria. Sin horarios que cargar, sin catálogo de servicios, sin datos de staff. Abres la app y en menos de 2 minutos puedes capturar tu primera cita.'
   },
   {
-    q: '¿Puedo cancelar mi suscripción en cualquier momento?',
-    a: 'Sí, sin penalizaciones ni contratos. Al cancelar tu cuenta queda activa hasta el final del periodo pagado.'
-  },
-  {
-    q: '¿Se guardan mis clientes y citas si cancelo?',
-    a: 'Tus datos se conservan por 30 días después de cancelar. Si reactivas tu cuenta en ese período los recuperas completos.'
+    q: '¿Qué pasa cuando termina el primer mes gratis?',
+    a: 'Te avisamos antes de que expire. Si decides continuar, se cobran $199 MXN al mes. Si no, se cancela sin cargos y sin que tengas que hacer nada complicado.'
   },
   {
     q: '¿Cuántos SMS incluye el plan?',
-    a: 'El plan incluye SMS ilimitados para confirmaciones, recordatorios, cancelaciones y campañas INVITE. Sin costo adicional por volumen.'
+    a: 'Los suficientes para el uso normal de una barbería: confirmación inicial, recordatorio 24h antes, mensaje de anti-ausencias y campañas para invitar clientes. No cobramos por SMS adicionales en uso normal.'
+  },
+  {
+    q: '¿Qué pasa si el cliente no responde ni al SMS ni a la llamada?',
+    a: 'La cita queda marcada en amarillo en el calendario. Tú decides: confirmarla manualmente, liberar el espacio para otro cliente, o simplemente esperarla. El sistema no toma decisiones por ti en ese caso.'
   },
 ]
 
@@ -36,7 +36,7 @@ export default function FAQPage() {
           </button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">Preguntas frecuentes</h1>
         </div>
-        <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5 invisible">placeholder</p>
+        <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">Encuentra respuestas a las dudas más comunes del uso de BarberMonster</p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-3">

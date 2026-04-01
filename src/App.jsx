@@ -12,6 +12,9 @@ import TrialExpirando from './pages/TrialExpirando'
 import TrialDemo from './pages/TrialDemo'
 import QuickConfirm from './pages/QuickConfirm'
 import SettingsPage from './pages/Settings'
+import SettingsProfilePage from './pages/SettingsProfile'
+import SettingsSubscriptionPage from './pages/SettingsSubscription'
+import SettingsCancelSubscriptionPage from './pages/SettingsCancelSubscription'
 import FAQPage from './pages/FAQ'
 import Toast from './components/shared/Toast'
 import { useToastStore } from './store/toast'
@@ -19,6 +22,7 @@ import { useToastStore } from './store/toast'
 function AppContent() {
   const location = useLocation()
   const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
+  const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
   const { visible, mensaje, ocultar } = useToastStore()
   const vistaPreviamente = localStorage.getItem('bm-bienvenida-vista') === 'true'
 
@@ -42,6 +46,9 @@ function AppContent() {
           <Route path="/trial-demo" element={<TrialDemo />} />
           <Route path="/quickconfirm" element={<QuickConfirm />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/profile" element={<SettingsProfilePage />} />
+          <Route path="/settings/subscription" element={<SettingsSubscriptionPage />} />
+          <Route path="/settings/subscription/cancel" element={<SettingsCancelSubscriptionPage />} />
         </Routes>
       </div>
     )
@@ -52,7 +59,7 @@ function AppContent() {
     <div className="h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 flex">
 
       {/* Sidebar — tablet y desktop */}
-      <Sidebar />
+      {!sinNavApp && <Sidebar />}
 
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -67,12 +74,15 @@ function AppContent() {
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/invite" element={<Invite />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings/profile" element={<SettingsProfilePage />} />
+              <Route path="/settings/subscription" element={<SettingsSubscriptionPage />} />
+              <Route path="/settings/subscription/cancel" element={<SettingsCancelSubscriptionPage />} />
               <Route path="/faq" element={<FAQPage />} />
             </Routes>
           </main>
 
           {/* BottomNav — solo móvil */}
-          <BottomNav />
+          {!sinNavApp && <BottomNav />}
         </div>
       </div>
     <Toast visible={visible} mensaje={mensaje} onClose={ocultar} />
