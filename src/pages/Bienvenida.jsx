@@ -43,12 +43,16 @@ export default function Bienvenida() {
         <ArrowRight size={18} />
       </button>
 
-      <button
-        onClick={handleEmpezar}
-        className="mt-4 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-      >
-        ¿Ya tienes una cita real? Regístrala aquí también →
-      </button>
+      <div className="mt-4 text-sm text-gray-400 dark:text-gray-500">
+        <span>¿Ya tienes una cita real? </span>
+        <button
+          onClick={handleEmpezar}
+          className="inline-flex items-center gap-1 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        >
+          <span>Regístrala aquí también</span>
+          <ArrowRight size={14} />
+        </button>
+      </div>
     </div>
   )
 }
