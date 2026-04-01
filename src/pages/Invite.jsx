@@ -16,37 +16,6 @@ const PLANTILLAS = [
   { id: 'v6', label: '"Un buen corte"', fn: sms.inviteV6 },
 ]
 
-const PASOS = ['Contactos', 'Mensaje', 'Confirmar']
-
-function StepIndicator({ paso }) {
-  return (
-    <div className="flex items-center justify-center mb-4">
-      {PASOS.map((label, i) => {
-        const num = i + 1
-        const activo = num === paso
-        const completado = num < paso
-        return (
-          <div key={i} className="flex items-center">
-            <div className="flex items-center gap-1.5">
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
-                completado || activo ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'
-              }`}>
-                {completado ? <Check size={12} /> : num}
-              </div>
-              <span className={`text-xs font-semibold whitespace-nowrap ${activo ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>
-                {label}
-              </span>
-            </div>
-            {i < PASOS.length - 1 && (
-              <div className={`w-8 h-px mx-2 ${completado ? 'bg-gray-900 dark:bg-white' : 'bg-gray-200 dark:bg-gray-700'}`} />
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
 function ContactoBtn({ c, onToggle }) {
   const seleccionado = c.enInviteList
   const dias = daysSince(c.ultimaVisita)
@@ -129,22 +98,28 @@ export default function Invite() {
 
       {/* Step indicator + CTA */}
       <div className="px-5 pt-4 pb-3 bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shrink-0">
-        <StepIndicator paso={paso} />
         <div className="flex gap-2">
           {paso > 1 && (
             <button onClick={() => setPaso(p => p - 1)} className="flex items-center gap-1.5 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <ArrowLeft size={16} />Atrás
             </button>
           )}
-          {paso < 3 ? (
-            <button onClick={() => setPaso(p => p + 1)} disabled={paso === 1 && seleccionados.length === 0}
+          {paso === 1 && (
+            <button onClick={() => setPaso(p => p + 1)} disabled={seleccionados.length === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-              Siguiente<ArrowRight size={16} />
+              Elegir mensaje<ArrowRight size={16} />
             </button>
-          ) : (
+          )}
+          {paso === 2 && (
+            <button onClick={() => setPaso(p => p + 1)}
+              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
+              Revisar mensaje y contactos<ArrowRight size={16} />
+            </button>
+          )}
+          {paso === 3 && (
             <button onClick={handleEnviar} disabled={seleccionados.length === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-              <Send size={16} />Invitar Clientes
+              <Send size={16} />{seleccionados.length === 1 ? 'Enviar invitación' : 'Enviar invitaciones'}
             </button>
           )}
         </div>
