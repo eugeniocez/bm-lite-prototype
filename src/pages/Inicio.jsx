@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 
 const BARBERIA = 'BarberMonster'
 
-export default function Bienvenida() {
+export default function Inicio() {
   const navigate = useNavigate()
 
   // Evento de conversión — en producción reemplazar con analytics real
@@ -13,7 +13,7 @@ export default function Bienvenida() {
   }, [])
 
   const handleEmpezar = () => {
-    localStorage.setItem('bm-bienvenida-vista', 'true')
+    localStorage.setItem('bm-inicio-vista', 'true')
     navigate('/quickbook')
   }
 
@@ -26,7 +26,7 @@ export default function Bienvenida() {
         className="w-24 h-24 mb-8"
       />
 
-      {/* Bienvenida */}
+      {/* Inicio */}
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
         Ya estás dentro. Ahora pruébalo registrando tu primera cita.
       </h1>

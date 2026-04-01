@@ -5,7 +5,7 @@ import QuickBook from './pages/QuickBook'
 import Calendario from './pages/Calendario'
 import Clientes from './pages/Clientes'
 import Invite from './pages/Invite'
-import Bienvenida from './pages/Bienvenida'
+import Inicio from './pages/Inicio'
 import Registro from './pages/Registro'
 import Login from './pages/Login'
 import TrialExpirando from './pages/TrialExpirando'
@@ -21,15 +21,15 @@ import { useToastStore } from './store/toast'
 
 function AppContent() {
   const location = useLocation()
-  const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
+  const sinNav = ['/inicio', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
   const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
   const { visible, mensaje, ocultar } = useToastStore()
-  const vistaPreviamente = localStorage.getItem('bm-bienvenida-vista') === 'true'
+  const vistaPreviamente = localStorage.getItem('bm-inicio-vista') === 'true'
 
   if (location.pathname === '/' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
   }
-  if (location.pathname === '/bienvenida' && vistaPreviamente) {
+  if (location.pathname === '/inicio' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
   }
 
@@ -38,10 +38,10 @@ function AppContent() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Routes>
-          <Route path="/" element={<Navigate to="/bienvenida" replace />} />
+          <Route path="/" element={<Navigate to="/inicio" replace />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/bienvenida" element={<Bienvenida />} />
+          <Route path="/inicio" element={<Inicio />} />
           <Route path="/trial" element={<TrialExpirando />} />
           <Route path="/trial-demo" element={<TrialDemo />} />
           <Route path="/quickconfirm" element={<QuickConfirm />} />

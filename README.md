@@ -33,7 +33,7 @@ Abre [http://localhost:5173](http://localhost:5173)
 |------|-------------|
 | `/registro` | Flujo de registro (nombre + teléfono → código SMS) |
 | `/login` | Flujo de login (teléfono → código SMS) |
-| `/bienvenida` | Post-registro — solo se muestra una vez |
+| `/inicio` | Post-registro — solo se muestra una vez |
 | `/quickbook` | Nueva cita |
 | `/calendario` | Vista día / 3 días / semana (semana solo en desktop) |
 | `/clientes` | Directorio de clientes |
@@ -48,7 +48,7 @@ src/
   pages/
     Registro.jsx        # Flujo de registro con verificación SMS (2 pasos)
     Login.jsx           # Flujo de login con verificación SMS (2 pasos)
-    Bienvenida.jsx      # Pantalla post-registro, solo primera vez
+    Inicio.jsx          # Pantalla post-registro, solo primera vez
     QuickBook.jsx       # Captura de citas + autocomplete por nombre y celular + alerta de conflicto de horario
     Calendario.jsx      # Vista día/3días/semana con estados, overlap y filtros de acción por tiempo
     Clientes.jsx        # Lista de clientes + panel lateral en desktop + agregar cliente manual
@@ -84,7 +84,7 @@ src/
 | Módulo | Estado |
 |--------|--------|
 | Registro + Login | ✅ Completo (simulado) |
-| Bienvenida post-registro | ✅ Completo |
+| Inicio post-registro | ✅ Completo |
 | M1 · Quick Book | ✅ Completo + autocomplete + alerta de conflicto de horario + toast |
 | M2 · Estados de cita (6 estados) | ✅ Completo |
 | M3 · Recordatorios | ✅ Arquitectura lista — SMS reales pendientes de backend |
@@ -332,5 +332,5 @@ Para resetear los datos al seed original basta con recargar la página — el es
 - La autenticación es visual — sin backend real ni tokens
 - El nombre de barbería se guarda en memoria (store `negocio.js`) al completar el registro demo
 - La gestión de usuarios está comentada en `Calendario.jsx` — lista para activar
-- El evento de conversión en `Bienvenida.jsx` es un `console.log` — reemplazar con SDK de analytics en producción
+- El evento de conversión en `Inicio.jsx` es un `console.log` — reemplazar con SDK de analytics en producción
 - `SinConfirmar` en producción lo asigna el sistema automáticamente — no debería ser acción manual del barbero

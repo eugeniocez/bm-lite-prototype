@@ -24,7 +24,7 @@ export default function Registro() {
       if (codigo === CODIGO_DEMO) {
         useNegocioStore.getState().setNombreBarberia(barberia)
         useNegocioStore.getState().setFechaRegistro(new Date().toISOString().split('T')[0])
-        navigate('/bienvenida')
+        navigate('/inicio')
       } else {
         setError('Código incorrecto. Usa 1234 para este demo.')
       }
