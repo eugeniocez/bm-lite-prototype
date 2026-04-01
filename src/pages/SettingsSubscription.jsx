@@ -119,7 +119,7 @@ export default function SettingsSubscriptionPage() {
                 <span className="text-sm font-bold" style={{ color: ACCENT }}>$199 MXN / mes</span>
               </div>
               <div className="px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-                <p className="text-xs text-gray-400">SMS · Recordatorios · Llamadas · INVITE · Todo incluido</p>
+                <p className="text-xs text-gray-400">SMS · Recordatorios · Llamadas · Invitar · Todo incluido</p>
               </div>
               <button
                 onClick={activarSuscripcion}

@@ -386,7 +386,7 @@ function ContactoDetalle({ contacto, onClose, onToggleInvite, onQuickBook, onGua
             }`}
           >
             <Send size={16} />
-            {contacto.enInviteList ? '✓ En lista INVITE' : 'Agregar a INVITE'}
+            {contacto.enInviteList ? '✓ En lista de Invitar' : 'Agregar a Invitar'}
           </button>
         </div>
       </div>

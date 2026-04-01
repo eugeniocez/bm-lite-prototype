@@ -107,7 +107,7 @@ export default function TrialExpirando() {
             </div>
             <div className="h-px bg-gray-100 dark:bg-gray-800 mb-2" />
             <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed">
-              SMS · Recordatorios · Llamadas · INVITE · Todo incluido
+              SMS · Recordatorios · Llamadas · Invitar · Todo incluido
             </p>
           </div>
 

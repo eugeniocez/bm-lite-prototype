@@ -5,7 +5,7 @@ const NAV_ITEMS = [
   { to: '/calendario', label: 'Calendario', Icon: Calendar },
   { to: '/clientes', label: 'Clientes', Icon: Users },
   { to: '/quickbook', label: 'Nueva Cita', Icon: Zap },
-  { to: '/invite', label: 'INVITE', Icon: Send },
+  { to: '/invite', label: 'Invitar', Icon: Send },
   { to: '/settings', label: 'Ajustes', Icon: Settings },
 ]
 

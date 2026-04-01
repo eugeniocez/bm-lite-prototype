@@ -1,19 +1,41 @@
 import { useNegocioStore } from '../store/negocio'
 const getBarberia = () => useNegocioStore.getState().nombreBarberia
 export const WA_LINK = 'wa.me/528110001234'
+export const INVITE_PREVIEW_TOKENS = {
+  cliente: '__invite_cliente__',
+  barberia: '__invite_barberia__',
+  whatsapp: '__invite_whatsapp__',
+}
 
 const primerNombre = (nombre) => nombre.split(' ')[0]
 
-export const proximoDiaTransquilo = () => {
-  const hoy = new Date().getDay() // 0=Dom, 1=Lun...
-  // Días tranquilos preferidos: martes y miércoles
-  const diasTransquilos = [2, 3] // martes, miércoles
+export const diaSemanaActual = () => {
   const diasNombres = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
-  for (let i = 1; i <= 7; i++) {
-    const dia = (hoy + i) % 7
-    if (diasTransquilos.includes(dia)) return diasNombres[dia]
+  return diasNombres[new Date().getDay()]
+}
+
+const resolveInviteContext = (input) => {
+  if (typeof input === 'string') {
+    return {
+      nombre: primerNombre(input),
+      barberia: getBarberia(),
+      whatsapp: 'WhatsApp',
+    }
   }
-  return 'esta semana'
+
+  if (input && typeof input === 'object') {
+    return {
+      nombre: input.nombre ?? INVITE_PREVIEW_TOKENS.cliente,
+      barberia: input.barberia ?? getBarberia(),
+      whatsapp: input.whatsapp ?? 'WhatsApp',
+    }
+  }
+
+  return {
+    nombre: INVITE_PREVIEW_TOKENS.cliente,
+    barberia: INVITE_PREVIEW_TOKENS.barberia,
+    whatsapp: INVITE_PREVIEW_TOKENS.whatsapp,
+  }
 }
 
 export const sms = {
@@ -34,21 +56,18 @@ export const sms = {
 
   // ── INVITE ──────────────────────────────────────────────────────
 
-  inviteV1: (nombre) =>
-    `Ey ${primerNombre(nombre)}, hace tiempo que no te vemos por aquí en ${getBarberia()}. ¿Qué tal si esta semana nos das el honor? Resérvalo aquí: ${WA_LINK}`,
+  inviteV1: (input) => {
+    const { nombre, barberia, whatsapp } = resolveInviteContext(input)
+    return `Ey ${nombre}, hace tiempo que no te vemos por aquí en ${barberia}. ¿Qué tal si esta semana nos das el honor? Resérvalo aquí: ${whatsapp}`
+  },
 
-  inviteV2: (nombre) =>
-    `Hola ${primerNombre(nombre)}, el ${proximoDiaTransquilo()} está tranquilo aquí en ${getBarberia()} — perfecto para que vengas sin esperar. ¿Te apuntamos? ${WA_LINK}`,
+  inviteV2: (input) => {
+    const { nombre, barberia, whatsapp } = resolveInviteContext(input)
+    return `Hola ${nombre}, el ${diaSemanaActual()} está tranquilo aquí en ${barberia} — perfecto para que vengas sin esperar. ¿Te apuntamos? ${whatsapp}`
+  },
 
-  inviteV3: (nombre) =>
-    `${primerNombre(nombre)}, tu look te está llamando 😅 Pasa por ${getBarberia()} esta semana y salimos del apuro. Agenda aquí: ${WA_LINK}`,
-
-  inviteV4: (nombre) =>
-    `Ey ${primerNombre(nombre)} — llevamos un rato sin verte por ${getBarberia()}. Tenemos tu lugar listo. ¿Cuándo vienes? ${WA_LINK}`,
-
-  inviteV5: (nombre) =>
-    `Hola ${primerNombre(nombre)}, en ${getBarberia()} extrañamos tu visita. Esta semana hay disponibilidad — aprovéchala antes de que se llene: ${WA_LINK}`,
-
-  inviteV6: (nombre) =>
-    `${primerNombre(nombre)}, dicen que un buen corte cambia el humor 💈 Ven a ${getBarberia()} esta semana y compruébalo. Te esperamos: ${WA_LINK}`,
+  inviteV5: (input) => {
+    const { nombre, barberia, whatsapp } = resolveInviteContext(input)
+    return `Hola ${nombre}, en ${barberia} extrañamos tu visita. Esta semana hay disponibilidad — aprovéchala antes de que se llene: ${whatsapp}`
+  },
 }

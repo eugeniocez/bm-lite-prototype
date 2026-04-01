@@ -1,20 +1,62 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Send, Users, MessageSquare, Check, ArrowLeft, ArrowRight } from 'lucide-react'
 import PageHeader from '../components/shared/PageHeader'
 import { useDirectorioStore } from '../store/directorio'
 import { useInviteStore } from '../store/invite'
+import { useNegocioStore } from '../store/negocio'
 import { daysSince } from '../utils/helpers'
-import { sms, proximoDiaTransquilo } from '../utils/sms-templates'
+import { diaSemanaActual, INVITE_PREVIEW_TOKENS, sms } from '../utils/sms-templates'
 
 const PLANTILLAS = [
   { id: 'v1', label: '"Hace tiempo"', fn: sms.inviteV1 },
-  { id: 'v2', label: `"El ${proximoDiaTransquilo()} está tranquilo"`, fn: sms.inviteV2 },
-  { id: 'v3', label: '"Tu look te llama"', fn: sms.inviteV3 },
-  { id: 'v4', label: '"Llevamos un rato"', fn: sms.inviteV4 },
+  { id: 'v2', label: `"El ${diaSemanaActual()} está tranquilo"`, fn: sms.inviteV2 },
   { id: 'v5', label: '"Hay disponibilidad"', fn: sms.inviteV5 },
-  { id: 'v6', label: '"Un buen corte"', fn: sms.inviteV6 },
 ]
+
+const PREVIEW_TOKEN_CLASS = 'font-bold italic text-purple-600 dark:text-purple-400'
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function InvitePreviewText({ text, nombreCliente, nombreBarberia, className }) {
+  const tokens = Object.values(INVITE_PREVIEW_TOKENS)
+  const pattern = new RegExp(`(${tokens.map(escapeRegExp).join('|')})`, 'g')
+  const parts = text.split(pattern).filter(Boolean)
+
+  return (
+    <p className={className}>
+      {parts.map((part, index) => {
+        if (part === INVITE_PREVIEW_TOKENS.cliente) {
+          return (
+            <span key={`${part}-${index}`} className={PREVIEW_TOKEN_CLASS}>
+              {nombreCliente}
+            </span>
+          )
+        }
+
+        if (part === INVITE_PREVIEW_TOKENS.barberia) {
+          return (
+            <span key={`${part}-${index}`} className={PREVIEW_TOKEN_CLASS}>
+              {nombreBarberia}
+            </span>
+          )
+        }
+
+        if (part === INVITE_PREVIEW_TOKENS.whatsapp) {
+          return (
+            <span key={`${part}-${index}`} className={PREVIEW_TOKEN_CLASS}>
+              WhatsApp
+            </span>
+          )
+        }
+
+        return <Fragment key={`${part}-${index}`}>{part}</Fragment>
+      })}
+    </p>
+  )
+}
 
 function ContactoBtn({ c, onToggle }) {
   const seleccionado = c.enInviteList
@@ -53,6 +95,7 @@ export default function Invite() {
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
   const enviarCampana = useInviteStore(s => s.enviarCampana)
+  const nombreBarberia = useNegocioStore(s => s.nombreBarberia)
 
   const [paso, setPaso] = useState(1)
   const [plantillaId, setPlantillaId] = useState('v1')
@@ -62,6 +105,11 @@ export default function Invite() {
   const recientes = contactos.filter(c => daysSince(c.ultimaVisita) < 30)
   const seleccionados = contactos.filter(c => c.enInviteList)
   const plantilla = PLANTILLAS.find(p => p.id === plantillaId)
+  const mensajeEjemplo = plantilla?.fn({
+    nombre: INVITE_PREVIEW_TOKENS.cliente,
+    barberia: INVITE_PREVIEW_TOKENS.barberia,
+    whatsapp: INVITE_PREVIEW_TOKENS.whatsapp,
+  })
 
   const handleEnviar = () => {
     if (seleccionados.length === 0) return
@@ -69,13 +117,11 @@ export default function Invite() {
     setEnviado(true)
   }
 
-  const handleReset = () => { setEnviado(false); setPaso(1); setPlantillaId('v1') }
-
   // ── Enviado ──
   if (enviado) {
     return (
       <div className="flex flex-col bg-gray-50 dark:bg-gray-950 min-h-full">
-        <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
+        <PageHeader title="Invitar" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
           <div className="w-16 h-16 bg-green-700 dark:bg-green-600 rounded-full flex items-center justify-center mb-4">
             <Check size={32} className="text-white" />
@@ -94,7 +140,7 @@ export default function Invite() {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950">
-      <PageHeader title="INVITE" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
+      <PageHeader title="Invitar" subtitle="Reactiva clientes que no te han visitado en 30+ días" icon={Send} />
 
       {/* Step indicator + CTA */}
       <div className="px-5 pt-4 pb-3 bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shrink-0">
@@ -178,7 +224,16 @@ export default function Invite() {
                   }`}
                 >
                   <p className={`text-xs font-bold mb-2 ${plantillaId === p.id ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`}>{p.label}</p>
-                  <p className={`text-sm leading-relaxed ${plantillaId === p.id ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>{p.fn('[Nombre]')}</p>
+                  <InvitePreviewText
+                    text={p.fn({
+                      nombre: INVITE_PREVIEW_TOKENS.cliente,
+                      barberia: INVITE_PREVIEW_TOKENS.barberia,
+                      whatsapp: INVITE_PREVIEW_TOKENS.whatsapp,
+                    })}
+                    nombreCliente="Nombre"
+                    nombreBarberia={nombreBarberia}
+                    className={`text-sm leading-relaxed ${plantillaId === p.id ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
+                  />
                 </button>
               ))}
             </div>
@@ -192,10 +247,20 @@ export default function Invite() {
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wide flex items-center gap-1.5">
                   <MessageSquare size={13} />Mensaje seleccionado
                 </p>
+                <p className="mt-1 text-xs text-gray-400">
+                  Cada contacto recibirá su mensaje con su propio nombre y su acceso por WhatsApp.
+                </p>
               </div>
               <div className="px-4 py-3">
                 <p className="text-xs text-gray-400 font-semibold mb-2">{plantilla?.label}</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{plantilla?.fn('[Nombre]')}</p>
+                {mensajeEjemplo && (
+                  <InvitePreviewText
+                    text={mensajeEjemplo}
+                    nombreCliente="Nombre"
+                    nombreBarberia={nombreBarberia}
+                    className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
+                  />
+                )}
               </div>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
