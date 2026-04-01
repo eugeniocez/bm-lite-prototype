@@ -7,6 +7,7 @@ import { todayStr, nowTimeStr, formatDate } from '../utils/helpers'
 import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
+import { useToastStore } from '../store/toast'
 
 
 export default function QuickBook() {
@@ -24,7 +25,7 @@ export default function QuickBook() {
   const [hora, setHora] = useState('10:00')
   const [nota, setNota] = useState('')
   const [esWalkIn, setEsWalkIn] = useState(false)
-  const [toast, setToast] = useState(false)
+  const mostrarToast = useToastStore(s => s.mostrar)
   const [sugerencias, setSugerencias] = useState([])
   const [showSugerencias, setShowSugerencias] = useState(false)
   const [sugerenciasCelular, setSugerenciasCelular] = useState([])
@@ -92,7 +93,7 @@ export default function QuickBook() {
     setCelular(''); setNombre(''); setFecha(todayStr()); setHora('10:00'); setNota(''); setEsWalkIn(false)
     setSugerencias([]); setShowSugerencias(false)
     setSugerenciasCelular([]); setShowSugerenciasCelular(false)
-    setToast(true)
+    mostrarToast(`✔︎ Cita creada y SMS enviado a +52${celular}`)
     setTimeout(() => navigate(`/calendario?fecha=${fecha}&hora=${hora}`), 500)
   }
 
@@ -258,7 +259,6 @@ export default function QuickBook() {
         </form>
       </div>
 
-      <Toast visible={toast} mensaje="Cita creada correctamente" onClose={() => setToast(false)} />
     </div>
   )
 }

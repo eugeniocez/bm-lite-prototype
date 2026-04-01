@@ -13,10 +13,13 @@ import TrialDemo from './pages/TrialDemo'
 import QuickConfirm from './pages/QuickConfirm'
 import SettingsPage from './pages/Settings'
 import FAQPage from './pages/FAQ'
+import Toast from './components/shared/Toast'
+import { useToastStore } from './store/toast'
 
 function AppContent() {
   const location = useLocation()
   const sinNav = ['/bienvenida', '/registro', '/login', '/trial', '/trial-demo', '/quickconfirm'].includes(location.pathname)
+  const { visible, mensaje, ocultar } = useToastStore()
   const vistaPreviamente = localStorage.getItem('bm-bienvenida-vista') === 'true'
 
   if (location.pathname === '/' && vistaPreviamente) {
@@ -72,6 +75,7 @@ function AppContent() {
           <BottomNav />
         </div>
       </div>
+    <Toast visible={visible} mensaje={mensaje} onClose={ocultar} />
     </div>
   )
 }

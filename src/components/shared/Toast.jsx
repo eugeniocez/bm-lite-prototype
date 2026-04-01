@@ -4,7 +4,7 @@ import { Check, X } from 'lucide-react'
 export default function Toast({ mensaje, visible, onClose, tipo = 'exito' }) {
   useEffect(() => {
     if (visible) {
-      const t = setTimeout(onClose, 3000)
+      const t = setTimeout(onClose, 1500)
       return () => clearTimeout(t)
     }
   }, [visible, onClose])
