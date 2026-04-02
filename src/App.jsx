@@ -5,6 +5,7 @@ import QuickBook from './pages/QuickBook'
 import Calendario from './pages/Calendario'
 import Clientes from './pages/Clientes'
 import Invite from './pages/Invite'
+import InviteBlocked from './pages/InviteBlocked'
 import Inicio from './pages/Inicio'
 import Registro from './pages/Registro'
 import Login from './pages/Login'
@@ -71,6 +72,7 @@ function AppContent() {
               <Route path="/calendario" element={<Calendario />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/invite" element={<Invite />} />
+              <Route path="/invite-bloqueada" element={<InviteBlocked />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/settings/profile" element={<SettingsProfilePage />} />
               <Route path="/settings/subscription" element={<SettingsSubscriptionPage />} />
