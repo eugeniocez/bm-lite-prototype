@@ -7,6 +7,7 @@ import { useInviteStore } from '../store/invite'
 import { useNegocioStore } from '../store/negocio'
 import { daysSince } from '../utils/helpers'
 import { diaSemanaActual, INVITE_PREVIEW_TOKENS, sms } from '../utils/sms-templates'
+import WizardInterventionCard from '../components/shared/WizardInterventionCard'
 
 const PLANTILLAS = [
   { id: 'v1', label: '"Hace tiempo"', fn: sms.inviteV1 },
@@ -90,7 +91,7 @@ function ContactoBtn({ c, onToggle }) {
   )
 }
 
-export default function Invite() {
+export default function Invite({ previewWizard = null }) {
   const navigate = useNavigate()
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
@@ -100,6 +101,7 @@ export default function Invite() {
   const [paso, setPaso] = useState(1)
   const [plantillaId, setPlantillaId] = useState('v1')
   const [enviado, setEnviado] = useState(false)
+  const [wizardOpen, setWizardOpen] = useState(previewWizard === 'intro')
 
   const sugeridos = contactos.filter(c => daysSince(c.ultimaVisita) >= 30)
   const recientes = contactos.filter(c => daysSince(c.ultimaVisita) < 30)
@@ -283,6 +285,19 @@ export default function Invite() {
           </div>
         )}
       </div>
+
+      <WizardInterventionCard
+        isOpen={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        title="Invitar"
+        description={
+          <p>
+            ¿Tienes <strong className="font-bold text-gray-900 dark:text-white">días con pocos clientes</strong>? Manda un <strong className="font-bold text-gray-900 dark:text-white">SMS</strong> a quienes no te han visitado y <strong className="font-bold text-gray-900 dark:text-white">llena esos espacios</strong>.
+          </p>
+        }
+        ctaLabel="Enviar mi primera invitación"
+        ctaIcon={ArrowRight}
+      />
     </div>
   )
 }

@@ -16,6 +16,7 @@ import SettingsProfilePage from './pages/SettingsProfile'
 import SettingsSubscriptionPage from './pages/SettingsSubscription'
 import SettingsCancelSubscriptionPage from './pages/SettingsCancelSubscription'
 import FAQPage from './pages/FAQ'
+import WizardPreviewIndex from './pages/WizardPreviewIndex'
 import Toast from './components/shared/Toast'
 import { useToastStore } from './store/toast'
 
@@ -23,6 +24,7 @@ function AppContent() {
   const location = useLocation()
   const sinNav = ['/inicio', '/registro', '/login', '/aviso-trial', '/quickconfirm'].includes(location.pathname)
   const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
+  const sinNavPreview = location.pathname === '/wizard-preview'
   const { visible, mensaje, ocultar } = useToastStore()
   const vistaPreviamente = localStorage.getItem('bm-inicio-vista') === 'true'
 
@@ -58,7 +60,7 @@ function AppContent() {
     <div className="h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 flex">
 
       {/* Sidebar — tablet y desktop */}
-      {!sinNavApp && <Sidebar />}
+      {!sinNavApp && !sinNavPreview && <Sidebar />}
 
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -68,6 +70,11 @@ function AppContent() {
           <main className="flex-1 overflow-hidden bg-gray-50 dark:bg-gray-950 flex flex-col">
             <Routes>
               <Route path="/" element={<Navigate to="/quickbook" replace />} />
+              <Route path="/wizard-preview" element={<WizardPreviewIndex />} />
+              <Route path="/quickbook/preview/primer-uso" element={<QuickBook previewWizard="first-use" />} />
+              <Route path="/calendario/preview/primer-uso" element={<Calendario previewWizard="colors" />} />
+              <Route path="/clientes/preview/primer-uso" element={<Clientes previewWizard="intro" />} />
+              <Route path="/invite/preview/primer-uso" element={<Invite previewWizard="intro" />} />
               <Route path="/quickbook" element={<QuickBook />} />
               <Route path="/calendario" element={<Calendario />} />
               <Route path="/clientes" element={<Clientes />} />
@@ -82,7 +89,7 @@ function AppContent() {
           </main>
 
           {/* BottomNav — solo móvil */}
-          {!sinNavApp && <BottomNav />}
+          {!sinNavApp && !sinNavPreview && <BottomNav />}
         </div>
       </div>
     <Toast visible={visible} mensaje={mensaje} onClose={ocultar} />

@@ -4,13 +4,13 @@ import { Zap, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr } from '../utils/helpers'
-import Toast from '../components/shared/Toast'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
+import WizardInterventionCard from '../components/shared/WizardInterventionCard'
 import { useToastStore } from '../store/toast'
 
 
-export default function QuickBook() {
+export default function QuickBook({ previewWizard = null }) {
   const agregarCita = useCitasStore(s => s.agregarCita)
   const getCitasPorFecha = useCitasStore(s => s.getCitasPorFecha)
   const cambiarEstado = useCitasStore(s => s.cambiarEstado)
@@ -33,6 +33,7 @@ export default function QuickBook() {
   const [showSugerenciasCelular, setShowSugerenciasCelular] = useState(false)
   const [conflicto, setConflicto] = useState(null)
   const [pendingData, setPendingData] = useState(null)
+  const [wizardOpen, setWizardOpen] = useState(previewWizard === 'first-use')
   const navigate = useNavigate()
   const nombreRef = useRef(null)
 
@@ -238,6 +239,18 @@ export default function QuickBook() {
           </button>
         </form>
       </div>
+
+      <WizardInterventionCard
+        isOpen={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        title="Nueva cita"
+        description={
+          <p>
+            Cada vez que alguien te <strong className="font-bold text-gray-900 dark:text-white">llame</strong> o te <strong className="font-bold text-gray-900 dark:text-white">escriba</strong>, registra la cita <strong className="font-bold text-gray-900 dark:text-white">aquí</strong>. El sistema le manda el <strong className="font-bold text-gray-900 dark:text-white">SMS automáticamente</strong>.
+          </p>
+        }
+        ctaLabel="Entendido"
+      />
 
     </div>
   )

@@ -7,15 +7,17 @@ import { ESTADO_CONFIG } from '../utils/estados'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/shared/PageHeader'
 import PhoneInput from '../components/shared/PhoneInput'
+import WizardInterventionCard from '../components/shared/WizardInterventionCard'
 import { useToastStore } from '../store/toast'
 
-export default function Clientes() {
+export default function Clientes({ previewWizard = null }) {
   const contactos = useDirectorioStore(s => s.contactos)
   const toggleInviteList = useDirectorioStore(s => s.toggleInviteList)
   const agregarOActualizar = useDirectorioStore(s => s.agregarOActualizar)
   const actualizarContacto = useDirectorioStore(s => s.actualizarContacto)
   const [busqueda, setBusqueda] = useState('')
   const [agregandoCliente, setAgregandoCliente] = useState(false)
+  const [wizardOpen, setWizardOpen] = useState(previewWizard === 'intro')
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const celularSeleccionado = searchParams.get('celular')
@@ -146,6 +148,18 @@ export default function Clientes() {
           />
         </div>
       )}
+
+      <WizardInterventionCard
+        isOpen={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        title="Clientes"
+        description={
+          <p>
+            Cada cliente que registres en una <strong className="font-bold text-gray-900 dark:text-white">cita</strong> se agrega aquí <strong className="font-bold text-gray-900 dark:text-white">automáticamente</strong>. <strong className="font-bold text-gray-900 dark:text-white">No tienes que hacer nada</strong>.
+          </p>
+        }
+        ctaLabel="Entendido"
+      />
     </div>
   )
 }

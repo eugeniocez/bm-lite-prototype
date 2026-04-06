@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft, ArrowRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft, ArrowRight, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -8,6 +8,7 @@ import { todayStr, addDays, formatDateLong, formatDate } from '../utils/helpers'
 import { ESTADO_CONFIG, TRANSICIONES, ACCION_LABELS } from '../utils/estados'
 import { calcularLayout } from '../utils/overlap'
 import Modal from '../components/shared/Modal'
+import WizardInterventionCard from '../components/shared/WizardInterventionCard'
 
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 const DEFAULT_HOUR_START = 7
@@ -41,6 +42,15 @@ const USUARIOS_SEED = [
   { id: 'u1', nombre: 'Tú', rol: 'Administrador', esAdmin: true, telefono: '' },
   { id: 'u2', nombre: 'Juan Pérez', rol: 'Miembro', esAdmin: false, telefono: '8112340001' },
   { id: 'u3', nombre: 'Carlos Ruiz', rol: 'Miembro', esAdmin: false, telefono: '8112340002' },
+]
+
+const ESTADO_LEGEND_ITEMS = [
+  { estado: 'Confirmada', description: 'La cita ya está firme y se ve segura en tu agenda.' },
+  { estado: 'SinConfirmar', description: 'La cita sigue incierta y conviene revisarla.' },
+  { estado: 'Apartada', description: 'La cita ya fue registrada y aún puede cambiar.' },
+  { estado: 'Cancelada', description: 'Ese espacio ya se liberó y no cuenta como visita.' },
+  { estado: 'NoShow', description: 'El cliente no llegó a la cita.' },
+  { estado: 'WalkIn', description: 'El cliente fue atendido sin haber apartado antes.' },
 ]
 
 function UsuariosPantalla({ onClose }) {
@@ -287,7 +297,7 @@ function CalendarColumn({ citas, onClick, onAddNew, esHoy, nowPx, showNowDot = t
   )
 }
 
-export default function Calendario() {
+export default function Calendario({ previewWizard = null }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const horaParam = searchParams.get('hora')
@@ -295,6 +305,8 @@ export default function Calendario() {
   const [fechaActual, setFechaActual] = useState(searchParams.get('fecha') || todayStr())
   const [citaSeleccionada, setCitaSeleccionada] = useState(null)
   const [currentTime, setCurrentTime] = useState(() => new Date())
+  const [legendOpen, setLegendOpen] = useState(false)
+  const [wizardOpen, setWizardOpen] = useState(previewWizard === 'colors')
 
   useEffect(() => {
     setSearchParams({ fecha: fechaActual }, { replace: true })
@@ -415,6 +427,14 @@ export default function Calendario() {
                 </button>
               ))}
             </div>
+            <button
+              onClick={() => setLegendOpen(true)}
+              className="flex items-center justify-center p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors"
+              aria-label="Ver significado de colores"
+              title="Ver significado de colores"
+            >
+              <Info size={17} className="text-gray-600 dark:text-gray-300" />
+            </button>
             {/* FEATURE: Gestión de usuarios — pendiente
             <button onClick={() => setUsuariosOpen(true)} className="flex items-center gap-0.5 p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
               <Users size={17} className="text-gray-600 dark:text-gray-400" />
@@ -539,6 +559,40 @@ export default function Calendario() {
       >
         {citaSeleccionada && <CitaDetalle cita={citaSeleccionada} onCambiarEstado={handleCambiarEstado} />}
       </Modal>
+
+      <Modal
+        isOpen={legendOpen}
+        onClose={() => setLegendOpen(false)}
+        title="Qué significa cada color"
+        subtitle="Úsalo para leer rápido qué tan firme está cada cita"
+      >
+        <div className="space-y-3">
+          {ESTADO_LEGEND_ITEMS.map((item) => {
+            const cfg = ESTADO_CONFIG[item.estado]
+            return (
+              <div key={item.estado} className="flex items-start gap-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/60 px-4 py-3">
+                <div className={`w-4 h-4 rounded-md shrink-0 mt-0.5 ${cfg.cardBg} ${cfg.cardBorder}`} />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{cfg.label}</p>
+                  <p className="text-xs leading-relaxed text-gray-500 dark:text-gray-400 mt-0.5">{item.description}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </Modal>
+
+      <WizardInterventionCard
+        isOpen={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        title="Calendario"
+        description={
+          <p>
+            Los <strong className="font-bold text-gray-900 dark:text-white">colores</strong> te dicen de un vistazo qué tan <strong className="font-bold text-gray-900 dark:text-white">segura</strong> está cada cita. Toca el <strong className="font-bold text-gray-900 dark:text-white">ícono (i)</strong> para conocer qué significa cada color.
+          </p>
+        }
+        ctaLabel="Entendido"
+      />
     </div>
   )
 }
