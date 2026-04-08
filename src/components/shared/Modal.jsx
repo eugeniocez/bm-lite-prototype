@@ -1,6 +1,17 @@
 import { useEffect } from 'react'
 
-export default function Modal({ isOpen, onClose, title, subtitle, children, closeOnBackdrop = true }) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  closeOnBackdrop = true,
+  scrollContent = true,
+  panelClassName = '',
+  contentClassName = '',
+  panelStyle,
+}) {
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -13,14 +24,16 @@ export default function Modal({ isOpen, onClose, title, subtitle, children, clos
     <div className="fixed inset-0 z-50 flex flex-col justify-center items-center px-4 sm:px-5">
       <div className="absolute inset-0 bg-black/40" onClick={closeOnBackdrop ? onClose : undefined} />
       <div
-        className="relative w-[min(23.5rem,calc(100vw-2rem))] sm:w-full sm:max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col"
-        style={{ maxHeight: '85vh' }}
+        className={`relative w-[min(23.5rem,calc(100vw-2rem))] sm:w-full sm:max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden ${panelClassName}`}
+        style={panelStyle || { maxHeight: '85vh' }}
       >
-        <div className="px-5 pt-6 pb-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h2>
-          {subtitle && <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">{subtitle}</p>}
-        </div>
-        <div className="overflow-y-auto px-5 py-4 pb-8 flex-1 min-h-0">
+        {(title || subtitle) && (
+          <div className="px-5 pt-6 pb-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+            {title && <h2 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h2>}
+            {subtitle && <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">{subtitle}</p>}
+          </div>
+        )}
+        <div className={`${scrollContent ? 'overflow-y-auto' : 'overflow-hidden'} px-5 py-4 pb-8 flex-1 min-h-0 ${contentClassName}`}>
           {children}
         </div>
       </div>

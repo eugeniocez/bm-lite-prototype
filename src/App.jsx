@@ -1,6 +1,9 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import BottomNav from './components/shared/BottomNav'
 import Sidebar from './components/shared/Sidebar'
+import Modal from './components/shared/Modal'
+import TrialNoticeContent, { TRIAL_DAYS_DEMO } from './components/shared/TrialNoticeContent'
 import QuickBook from './pages/QuickBook'
 import Calendario from './pages/Calendario'
 import Clientes from './pages/Clientes'
@@ -18,15 +21,31 @@ import SettingsCancelSubscriptionPage from './pages/SettingsCancelSubscription'
 import FAQPage from './pages/FAQ'
 import WizardPreviewIndex from './pages/WizardPreviewIndex'
 import Toast from './components/shared/Toast'
+import { useNegocioStore } from './store/negocio'
 import { useToastStore } from './store/toast'
 
 function AppContent() {
   const location = useLocation()
+  const navigate = useNavigate()
   const sinNav = ['/inicio', '/registro', '/login', '/aviso-trial', '/quickconfirm'].includes(location.pathname)
   const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
   const sinNavPreview = location.pathname === '/wizard-preview'
   const { visible, mensaje, ocultar } = useToastStore()
+  const nombreBarberia = useNegocioStore(s => s.nombreBarberia)
+  const plan = useNegocioStore(s => s.plan)
   const vistaPreviamente = localStorage.getItem('bm-inicio-vista') === 'true'
+  const [isDesktopOrTablet, setIsDesktopOrTablet] = useState(() => window.innerWidth >= 768)
+  const [trialModalOpen, setTrialModalOpen] = useState(true)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)')
+    const handleChange = (event) => setIsDesktopOrTablet(event.matches)
+
+    setIsDesktopOrTablet(mediaQuery.matches)
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   if (location.pathname === '/' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
@@ -54,6 +73,15 @@ function AppContent() {
       </div>
     )
   }
+
+  const mostrarAvisoTrialModal =
+    isDesktopOrTablet &&
+    trialModalOpen &&
+    plan === 'trial' &&
+    TRIAL_DAYS_DEMO <= 5 &&
+    !sinNav &&
+    !sinNavApp &&
+    !sinNavPreview
 
   // App principal — con nav
   return (
@@ -92,7 +120,29 @@ function AppContent() {
           {!sinNavApp && !sinNavPreview && <BottomNav />}
         </div>
       </div>
-    <Toast visible={visible} mensaje={mensaje} onClose={ocultar} />
+      {mostrarAvisoTrialModal && (
+        <Modal
+          isOpen={mostrarAvisoTrialModal}
+          onClose={() => setTrialModalOpen(false)}
+          closeOnBackdrop={false}
+          scrollContent={false}
+          panelClassName="sm:max-w-[40rem] lg:max-w-[42rem] rounded-[2rem]"
+          panelStyle={{ maxHeight: '88vh' }}
+          contentClassName="p-0"
+        >
+          <TrialNoticeContent
+            dias={TRIAL_DAYS_DEMO}
+            nombreBarberia={nombreBarberia || 'tu barbería'}
+            variant="modal"
+            onActivate={() => {
+              setTrialModalOpen(false)
+              navigate('/settings/subscription')
+            }}
+            onRemindLater={() => setTrialModalOpen(false)}
+          />
+        </Modal>
+      )}
+      <Toast visible={visible} mensaje={mensaje} onClose={ocultar} />
     </div>
   )
 }
