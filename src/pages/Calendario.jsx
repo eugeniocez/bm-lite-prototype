@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, Users, Plus, Trash2, ArrowLeft, ArrowRight, Info } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CalendarDays, Users, Plus, Trash2, ArrowLeft, ArrowRight, Info } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -410,7 +410,7 @@ export default function Calendario({ previewWizard = null }) {
       <div className="px-4 pt-6 pb-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Calendar size={20} />Calendario
+            <CalendarDays size={20} />Calendario
           </h1>
           <div className="flex items-center gap-2">
             <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">

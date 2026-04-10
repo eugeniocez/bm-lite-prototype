@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Zap, Calendar, Users, Send, Settings } from 'lucide-react'
+import { CalendarPlus, CalendarDays, Users, Send, Settings } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { to: '/calendario', label: 'Calendario', Icon: Calendar },
+  { to: '/calendario', label: 'Calendario', Icon: CalendarDays },
   { to: '/clientes', label: 'Clientes', Icon: Users },
-  { to: '/quickbook', label: 'Nueva Cita', Icon: Zap },
+  { to: '/quickbook', label: 'Nueva Cita', Icon: CalendarPlus },
   { to: '/invite', label: 'Invitar', Icon: Send },
   { to: '/settings', label: 'Ajustes', Icon: Settings },
 ]

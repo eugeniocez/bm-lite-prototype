@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Zap, Clock } from 'lucide-react'
+import { CalendarPlus, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr } from '../utils/helpers'
@@ -124,7 +124,7 @@ export default function QuickBook({ previewWizard = null }) {
 
   return (
     <div className="flex-1 bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={Zap} brand="lockup" />
+      <PageHeader title="Nueva cita" subtitle="Captura tu cita" icon={CalendarPlus} brand="lockup" />
 
       <div className="px-5 py-5 space-y-4">
         {esWalkIn && (

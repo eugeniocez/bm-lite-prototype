@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Calendar, Users, Send, Settings, Plus } from 'lucide-react'
+import { CalendarDays, Users, Send, Settings, Plus } from 'lucide-react'
 import { todayStr } from '../../utils/helpers'
 
 const NAV_ITEMS = [
-  { to: '/calendario', label: 'Calendario', Icon: Calendar },
+  { to: '/calendario', label: 'Calendario', Icon: CalendarDays },
   { to: '/clientes', label: 'Clientes', Icon: Users },
   { to: '/invite', label: 'Invitar', Icon: Send },
   { to: '/settings', label: 'Ajustes', Icon: Settings },
