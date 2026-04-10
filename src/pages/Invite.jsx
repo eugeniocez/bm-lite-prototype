@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Send, Users, MessageSquare, Check, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Send, Users, MessageSquare, Check, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
 import PageHeader from '../components/shared/PageHeader'
 import { useDirectorioStore } from '../store/directorio'
 import { useInviteStore } from '../store/invite'
@@ -291,12 +291,21 @@ export default function Invite({ previewWizard = null }) {
         onClose={() => setWizardOpen(false)}
         title="Invitar"
         description={
-          <p>
-            ¿Tienes <strong className="font-bold text-gray-900 dark:text-white">días con pocos clientes</strong>? Manda un <strong className="font-bold text-gray-900 dark:text-white">SMS</strong> a quienes no te han visitado y <strong className="font-bold text-gray-900 dark:text-white">llena esos espacios</strong>.
-          </p>
+          <div className="flex items-start gap-3">
+            <CheckCircle2
+              size={16}
+              strokeWidth={2.2}
+              className="mt-1 shrink-0"
+              style={{ color: '#1B7DE2' }}
+            />
+            <p className="leading-6 text-gray-600 dark:text-gray-300">
+              ¿Tienes <strong className="font-bold text-gray-900 dark:text-white">días con pocos clientes</strong>? Manda un <strong className="font-bold text-gray-900 dark:text-white">SMS</strong> a quienes no te han visitado y <strong className="font-bold text-gray-900 dark:text-white">llena esos espacios</strong>
+            </p>
+          </div>
         }
-        ctaLabel="Enviar mi primera invitación"
-        ctaIcon={ArrowRight}
+        ctaLabel="Explorar la sección de Invitar"
+        ctaClassName="bg-[#1B7DE2] hover:bg-[#166BC1] dark:bg-[#1B7DE2] dark:hover:bg-[#166BC1] dark:text-white"
+        contentClassName="gap-6"
       />
     </div>
   )

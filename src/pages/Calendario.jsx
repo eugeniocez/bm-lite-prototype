@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, CalendarDays, Users, Plus, Trash2, ArrowLeft, ArrowRight, Info } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CalendarDays, Users, Plus, Trash2, ArrowLeft, ArrowRight, Info, CheckCircle2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
@@ -587,11 +587,34 @@ export default function Calendario({ previewWizard = null }) {
         onClose={() => setWizardOpen(false)}
         title="Calendario"
         description={
-          <p>
-            Los <strong className="font-bold text-gray-900 dark:text-white">colores</strong> te dicen de un vistazo qué tan <strong className="font-bold text-gray-900 dark:text-white">segura</strong> está cada cita. Toca el <strong className="font-bold text-gray-900 dark:text-white">ícono (i)</strong> para conocer qué significa cada color.
-          </p>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <CheckCircle2
+                size={16}
+                strokeWidth={2.2}
+                className="mt-1 shrink-0"
+                style={{ color: '#1B7DE2' }}
+              />
+              <p className="leading-6 text-gray-600 dark:text-gray-300">
+                Los <strong className="font-bold text-gray-900 dark:text-white">colores</strong> te dicen de un vistazo qué tan <strong className="font-bold text-gray-900 dark:text-white">segura</strong> está cada cita
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle2
+                size={16}
+                strokeWidth={2.2}
+                className="mt-1 shrink-0"
+                style={{ color: '#1B7DE2' }}
+              />
+              <p className="leading-6 text-gray-600 dark:text-gray-300">
+                Toca el <strong className="font-bold text-gray-900 dark:text-white">ícono (i)</strong> para conocer qué significa cada color
+              </p>
+            </div>
+          </div>
         }
         ctaLabel="Entendido"
+        ctaClassName="bg-[#1B7DE2] hover:bg-[#166BC1] dark:bg-[#1B7DE2] dark:hover:bg-[#166BC1] dark:text-white"
+        contentClassName="gap-6"
       />
     </div>
   )

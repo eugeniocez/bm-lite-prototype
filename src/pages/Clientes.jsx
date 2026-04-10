@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus, PencilLine, Check } from 'lucide-react'
+import { Users, Search, ArrowLeft, Zap, Send, ChevronRight, X, Plus, PencilLine, Check, CheckCircle2 } from 'lucide-react'
 import { useDirectorioStore } from '../store/directorio'
 import { useCitasStore } from '../store/citas'
 import { daysSince, formatDate, todayStr } from '../utils/helpers'
@@ -154,11 +154,21 @@ export default function Clientes({ previewWizard = null }) {
         onClose={() => setWizardOpen(false)}
         title="Clientes"
         description={
-          <p>
-            Cada cliente que registres en una <strong className="font-bold text-gray-900 dark:text-white">cita</strong> se agrega aquí <strong className="font-bold text-gray-900 dark:text-white">automáticamente</strong>. <strong className="font-bold text-gray-900 dark:text-white">No tienes que hacer nada</strong>.
-          </p>
+          <div className="flex items-start gap-3">
+            <CheckCircle2
+              size={16}
+              strokeWidth={2.2}
+              className="mt-1 shrink-0"
+              style={{ color: '#1B7DE2' }}
+            />
+            <p className="leading-6 text-gray-600 dark:text-gray-300">
+              Cada cliente que registres en una <strong className="font-bold text-gray-900 dark:text-white">cita</strong> se agrega aquí <strong className="font-bold text-gray-900 dark:text-white">automáticamente</strong>
+            </p>
+          </div>
         }
         ctaLabel="Entendido"
+        ctaClassName="bg-[#1B7DE2] hover:bg-[#166BC1] dark:bg-[#1B7DE2] dark:hover:bg-[#166BC1] dark:text-white"
+        contentClassName="gap-6"
       />
     </div>
   )

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { CalendarPlus, Clock } from 'lucide-react'
+import { CalendarPlus, CheckCircle2, Clock } from 'lucide-react'
 import { useCitasStore } from '../store/citas'
 import { useDirectorioStore } from '../store/directorio'
 import { todayStr } from '../utils/helpers'
@@ -245,11 +245,34 @@ export default function QuickBook({ previewWizard = null }) {
         onClose={() => setWizardOpen(false)}
         title="Nueva cita"
         description={
-          <p>
-            Cada vez que alguien te <strong className="font-bold text-gray-900 dark:text-white">llame</strong> o te <strong className="font-bold text-gray-900 dark:text-white">escriba</strong>, registra la cita <strong className="font-bold text-gray-900 dark:text-white">aquí</strong>. El sistema le manda el <strong className="font-bold text-gray-900 dark:text-white">SMS automáticamente</strong>.
-          </p>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <CheckCircle2
+                size={16}
+                strokeWidth={2.2}
+                className="mt-1 shrink-0"
+                style={{ color: '#1B7DE2' }}
+              />
+              <p className="leading-6 text-gray-600 dark:text-gray-300">
+                Cada vez que alguien te <strong className="font-bold text-gray-900 dark:text-white">llame</strong> o te <strong className="font-bold text-gray-900 dark:text-white">escriba</strong>, registra la cita <strong className="font-bold text-gray-900 dark:text-white">aquí</strong>
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle2
+                size={16}
+                strokeWidth={2.2}
+                className="mt-1 shrink-0"
+                style={{ color: '#1B7DE2' }}
+              />
+              <p className="leading-6 text-gray-600 dark:text-gray-300">
+                El sistema enviará un <strong className="font-bold text-gray-900 dark:text-white">SMS automáticamente</strong>
+              </p>
+            </div>
+          </div>
         }
         ctaLabel="Entendido"
+        ctaClassName="bg-[#1B7DE2] hover:bg-[#166BC1] dark:bg-[#1B7DE2] dark:hover:bg-[#166BC1] dark:text-white"
+        contentClassName="gap-6"
       />
 
     </div>
