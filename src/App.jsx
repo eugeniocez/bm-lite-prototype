@@ -50,9 +50,6 @@ function AppContent() {
   if (location.pathname === '/' && vistaPreviamente) {
     return <Navigate to="/quickbook" replace />
   }
-  if (location.pathname === '/inicio' && vistaPreviamente) {
-    return <Navigate to="/quickbook" replace />
-  }
 
   // Pantallas de auth — sin nav, centradas
   if (sinNav) {
