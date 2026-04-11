@@ -22,18 +22,18 @@ export default function SettingsCancelSubscriptionPage() {
   return (
     <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="px-5 pt-6 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-1 -ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+        <div className="flex items-start gap-3">
+          <button onClick={() => navigate(-1)} className="mt-0.5 p-1 -ml-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <ArrowLeft size={20} />
           </button>
           <h1 className="text-lg font-bold text-gray-900 dark:text-white">¿Estás seguro que deseas cancelar tu suscripción a Monster Plus?</h1>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4 space-y-4">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Perderas los siguientes beneficios:</p>
-          <div className="space-y-3">
+      <div className="flex-1 overflow-y-auto pb-24 space-y-4 bg-white dark:bg-gray-900">
+        <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-4">
+          <p className="text-sm text-gray-900 dark:text-white">Perderas los siguientes beneficios:</p>
+          <div className="mt-3 space-y-2">
             {BENEFICIOS.map((item) => {
               const Icon = item.icon
               return (
@@ -46,10 +46,10 @@ export default function SettingsCancelSubscriptionPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-2 px-4">
           <button
             onClick={() => navigate(-1)}
-            className="w-full py-3 text-sm font-bold rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+            className="w-full py-3 text-sm font-bold rounded-lg bg-[#1B7DE2] text-white"
           >
             No, conservar Monster Plus
           </button>

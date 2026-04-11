@@ -18,6 +18,8 @@ import SettingsPage from './pages/Settings'
 import SettingsProfilePage from './pages/SettingsProfile'
 import SettingsSubscriptionPage from './pages/SettingsSubscription'
 import SettingsCancelSubscriptionPage from './pages/SettingsCancelSubscription'
+import SettingsSupportPage from './pages/SettingsSupport'
+import SettingsInstallPage from './pages/SettingsInstall'
 import FAQPage from './pages/FAQ'
 import WizardPreviewIndex from './pages/WizardPreviewIndex'
 import Toast from './components/shared/Toast'
@@ -28,7 +30,7 @@ function AppContent() {
   const location = useLocation()
   const navigate = useNavigate()
   const sinNav = ['/inicio', '/registro', '/login', '/aviso-trial', '/quickconfirm'].includes(location.pathname)
-  const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/faq'].includes(location.pathname)
+  const sinNavApp = ['/settings/profile', '/settings/subscription', '/settings/subscription/cancel', '/settings/support', '/settings/install', '/faq'].includes(location.pathname)
   const sinNavPreview = location.pathname === '/wizard-preview'
   const { visible, mensaje, ocultar } = useToastStore()
   const nombreBarberia = useNegocioStore(s => s.nombreBarberia)
@@ -66,6 +68,8 @@ function AppContent() {
           <Route path="/settings/profile" element={<SettingsProfilePage />} />
           <Route path="/settings/subscription" element={<SettingsSubscriptionPage />} />
           <Route path="/settings/subscription/cancel" element={<SettingsCancelSubscriptionPage />} />
+          <Route path="/settings/support" element={<SettingsSupportPage />} />
+          <Route path="/settings/install" element={<SettingsInstallPage />} />
         </Routes>
       </div>
     )
@@ -109,6 +113,8 @@ function AppContent() {
               <Route path="/settings/profile" element={<SettingsProfilePage />} />
               <Route path="/settings/subscription" element={<SettingsSubscriptionPage />} />
               <Route path="/settings/subscription/cancel" element={<SettingsCancelSubscriptionPage />} />
+              <Route path="/settings/support" element={<SettingsSupportPage />} />
+              <Route path="/settings/install" element={<SettingsInstallPage />} />
               <Route path="/faq" element={<FAQPage />} />
             </Routes>
           </main>

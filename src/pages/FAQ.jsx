@@ -29,7 +29,7 @@ export default function FAQPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
+    <div className="flex flex-col flex-1 bg-white dark:bg-gray-900 overflow-hidden">
       <div className="px-5 pt-6 pb-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -43,13 +43,15 @@ export default function FAQPage() {
         <p className="text-gray-400 dark:text-gray-500 text-sm mt-0.5">Encuentra respuestas a las dudas más comunes del uso de BarberMonster</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-3">
+      <div className="flex-1 bg-white dark:bg-gray-900 pb-24">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800 border-b border-gray-100 dark:border-gray-800">
         {FAQS.map((faq, i) => (
-          <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 px-4 py-4">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{faq.q}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{faq.a}</p>
+          <div key={i} className="px-5 py-4 bg-white dark:bg-gray-900">
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">{faq.q}</p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{faq.a}</p>
           </div>
         ))}
+        </div>
       </div>
     </div>
   )
