@@ -60,12 +60,15 @@ export default function SettingsPage() {
 
         {!suscripcionActiva && (
           <div className="px-4 pt-4 space-y-4">
-            <button
-              onClick={() => navigate('/settings/subscription')}
-              className="w-full rounded-lg bg-[#1B7DE2] px-4 py-3 text-sm font-bold text-white transition-all active:opacity-80"
-            >
-              Activar suscripción por $199 MXN/mes
-            </button>
+            <div>
+              <button
+                onClick={() => navigate('/settings/subscription')}
+                className="w-full rounded-lg bg-[#1B7DE2] px-4 py-3 text-sm font-bold text-white transition-all active:opacity-80"
+              >
+                Activar suscripción por $199 MXN/mes
+              </button>
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Precio final con IVA incluido.</p>
+            </div>
 
             <div className="rounded-xl border border-gray-200 bg-white px-4 py-4 dark:border-gray-800 dark:bg-gray-900">
               <p className="text-sm text-gray-900 dark:text-white">Beneficios</p>

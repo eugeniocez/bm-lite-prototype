@@ -88,6 +88,7 @@ export default function SettingsSubscriptionPage() {
               >
                 Activar suscripción por $199 MXN/mes
               </button>
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Precio final con IVA incluido</p>
             </div>
           </>
         )}
