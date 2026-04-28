@@ -159,12 +159,6 @@ export default function Invite({ previewWizard = null }) {
             </button>
           )}
           {paso === 2 && (
-            <button onClick={() => setPaso(p => p + 1)}
-              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
-              Revisar mensaje y contactos<ArrowRight size={16} />
-            </button>
-          )}
-          {paso === 3 && (
             <button onClick={handleEnviar} disabled={seleccionados.length === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-purple-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
               <Send size={16} />{seleccionados.length === 1 ? 'Enviar invitación' : 'Enviar invitaciones'}
@@ -242,48 +236,7 @@ export default function Invite({ previewWizard = null }) {
           </div>
         )}
 
-        {paso === 3 && (
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide flex items-center gap-1.5">
-                  <MessageSquare size={13} />Mensaje seleccionado
-                </p>
-                <p className="mt-1 text-xs text-gray-400">
-                  Cada contacto recibirá su mensaje con su propio nombre y su acceso por WhatsApp.
-                </p>
-              </div>
-              <div className="px-4 py-3">
-                <p className="text-xs text-gray-400 font-semibold mb-2">{plantilla?.label}</p>
-                {mensajeEjemplo && (
-                  <InvitePreviewText
-                    text={mensajeEjemplo}
-                    nombreCliente="Nombre"
-                    nombreBarberia={nombreBarberia}
-                    className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
-                  />
-                )}
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide flex items-center gap-1.5">
-                  <Users size={13} />{seleccionados.length} contacto{seleccionados.length > 1 ? 's' : ''}
-                </p>
-              </div>
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {seleccionados.map(c => (
-                  <div key={c.id} className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-gray-700 dark:text-gray-300 font-bold text-xs">{c.nombre[0]}</span>
-                    </div>
-                    <p className="text-gray-900 dark:text-white text-sm font-medium">{c.nombre}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
 
       <WizardInterventionCard
